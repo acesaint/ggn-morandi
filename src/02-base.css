@@ -1,0 +1,273 @@
+/* ==========================================================================
+   02 — 几何中和
+   --------------------------------------------------------------------------
+   站点是 2009 年的皮肤：头部 274px 绝对定位画布、内容定宽 1100px 并下移
+   30px、页脚 absolute 贴底、盒子与表头用位图/渐变做立体感。
+
+   这一层只做三件事：把 position 归零、把 height 改成 auto、把 background /
+   filter 去掉。它**不设计任何东西**——设计全部在 03/04/05。
+
+   !important 台账（本文件仅 5 处，理由逐条写在行尾）：
+     1  td.cats_col                  站点自带 !important，需强制
+     2  .filter_torrents h3          站点硬编码蓝色描边 + !important
+     3  #torrents #content form      站点 -8px/102% 负边距 hack，会撑破网格
+     4  tr.group_torrent td[colspan] 站点 95px 缩进 !important
+     5  tr.group_torrent .edition_info 同上
+   ========================================================================== */
+
+html {
+  background-color: var(--m-1);
+}
+
+/* build:allow-star
+   全站基础盒模型。这是唯一一处通配选择器，且只在样式计算时匹配一次，
+   没有运行时成本。站点自己只给 html/body 设了 border-box，容器全是
+   content-box：实测 #content 设 1280px 后实际占 1312px，页面横向溢出
+   32px。统一成 border-box 之后，宽度、输入框高度、卡片内边距全部可预期。 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  position: static;                 /* 站点：position:absolute */
+  height: auto;
+  background-color: var(--m-1);     /* 去掉 background.jpg + fixed 合成 */
+  background-image: none;
+  background-attachment: scroll;
+  color: var(--tx-0);
+  font-family: var(--font);
+  font-size: var(--t-0);
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
+}
+
+#wrapper {
+  position: static;
+  min-height: 0;
+  padding-bottom: 0;
+}
+
+/* 主内容：1100px 定宽 + top:30px + 渐变 + 重投影 → 常规文档流。
+   position 必须保留 relative：它是内容区里所有绝对定位元素的包含块，
+   改成 static 会让它们逃到 body 上，连 overflow 都裁不住（真实页面实测到的）。 */
+#content {
+  position: relative;
+  top: auto;
+  width: min(var(--shell), 100%);
+  min-height: 0;
+  height: auto;
+  margin: 0 auto;
+  padding: var(--s4);
+  background-image: none;
+  background-color: var(--m-2);
+  border-radius: var(--r3);
+  box-shadow: none;
+}
+
+/* ---- 头部：274px 绝对定位画布 ------------------------------------- */
+#header {
+  position: relative;
+  height: auto;
+  background: none;
+  border: 0;
+}
+
+#logo {
+  height: var(--logo-h);
+  margin-left: 0;
+  border-bottom: 0;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#logo a {
+  height: 100%;
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+#userinfo {
+  position: static;
+  height: auto;
+  background: none;
+  border: 0;
+}
+
+/* 用户条里三个绝对定位的块，全部回到流内 */
+#userinfo_username {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  padding: 0;
+}
+
+#userinfo_minor {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  background-image: none;
+}
+
+#userinfo_stats {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  width: auto;
+  height: auto;
+  padding: 0;
+  background-image: none;
+}
+
+/* 下拉层原机制：top:30px + height:1px + visibility:hidden
+   这里只清几何，显示逻辑在 03-shell 重建 */
+.sub {
+  position: static;
+  top: auto;
+  margin: 0;
+  height: auto;
+  overflow: visible;
+}
+
+#menu {
+  float: none;
+  position: relative;
+  height: auto;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  font-family: var(--font);
+  font-size: var(--t-0);
+}
+
+#menu ul {
+  max-width: none;
+}
+
+#searchbars ul {
+  position: static;
+  right: auto;
+  top: auto;
+  margin-right: 0;
+  height: auto;
+  background: none;
+}
+
+#alerts {
+  position: static;
+  top: auto;
+  width: auto;
+  margin: 0;
+}
+
+#announcement {
+  position: static;
+  top: auto;
+  width: auto;
+  margin: 0;
+}
+
+.donateico {
+  position: static;
+  left: auto;
+  width: auto;
+  margin: 0;
+}
+
+.clan_trophy {
+  position: static;
+  top: auto;
+  right: auto;
+  opacity: 1;
+}
+
+.global_buffs {
+  position: static;
+  top: auto;
+  left: auto;
+  filter: none;
+  background: none;
+  padding: 0;
+}
+
+/* ---- 页脚：absolute 贴底 ----------------------------------------- */
+#footer {
+  position: static;
+  bottom: auto;
+  margin-top: var(--s5);
+  background-color: var(--m-1);
+  border-top: 1px solid var(--ln);
+}
+
+#site_debug {
+  position: static;
+  top: auto;
+  border-bottom: 0;
+  background: none;
+}
+
+/* ---- 盒子与表头：位图 / 渐变 / 负边距 / 投影 --------------------- */
+.box,
+table {
+  background-image: none;
+}
+
+.colhead,
+.colhead_dark,
+.head {
+  margin: 0;
+  width: auto;
+  padding: var(--s3) var(--s3);
+  background-color: var(--m-3);
+  background-image: none;
+  box-shadow: none;
+  border-radius: var(--r2) var(--r2) 0 0;
+  font-size: var(--t-1);
+}
+
+.colhead ul,
+.colhead_dark ul,
+.head ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+blockquote,
+pre {
+  width: auto;
+  filter: none;
+  margin: var(--s3) 0;
+}
+
+/* ---- 剩下的强制项 ------------------------------------------------- */
+td.cats_col {
+  padding: var(--s2) var(--s3) !important; /* 1: 站点 15px/10px 撑高整行 */
+}
+
+.filter_torrents h3 {
+  padding: 0 0 var(--s1) !important;                 /* 2 */
+  border-bottom: 1px solid var(--ln) !important;      /* 2: 站点硬编码 #c6e6f6 */
+}
+
+#torrents #content form[name="filter"] {
+  margin: 0 !important; /* 3: 站点 -8px + 102%，会撑破网格 */
+  width: 100%;
+}
+
+tr.group_torrent td[colspan] {
+  padding-left: var(--s5) !important; /* 4: 站点 95px */
+}
+
+tr.group_torrent td.edition_info {
+  padding-left: var(--s5) !important; /* 5 */
+}

@@ -1,0 +1,23 @@
+/* ==UserStyle==
+@name           Gazelle Dark Morandi xXx
+@namespace      github.com/acesaint/ggn-morandi
+@version        1.0.0
+@description    Dark Morandi theme for GazelleGames. Muted, dark, minimal: rebuilt shell, flat surfaces, hairline borders.
+@author         acesaint
+@license        MIT
+@match          https://gazellegames.net/*
+@match          https://*.gazellegames.net/*
+==/UserStyle== */
+
+/*
+ * 成品由 build.py 拼接，顺序：
+ *   01-tokens     设计变量（唯一允许出现色值的地方）
+ *   02-base       几何中和：清掉 2009 皮肤绝对定位 / 固定高度 / 位图背景 / filter
+ *   03-shell      重写骨架：头部、用户条、导航、搜索、内容网格、页脚、断点
+ *   04-components 通用组件：盒子、表格、表单、按钮、标签
+ *   05-pages      页面级
+ *   06-motion     过渡与 reduced-motion
+ *
+ * 应用范围由 Stylus 的 @match 决定，这里不写 @-moz-document 包裹，
+ * 避免拼接时出现外层块导致后续文件失效。
+ */

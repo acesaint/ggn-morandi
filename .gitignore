@@ -1,0 +1,8 @@
+# 本地测量产物，不入库
+dist/
+captures/
+harness/
+shots/
+release/
+__pycache__/
+.DS_Store

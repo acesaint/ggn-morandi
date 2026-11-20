@@ -1,0 +1,134 @@
+/* ==========================================================================
+   05b — 平台页签的中文/英文名字
+   --------------------------------------------------------------------------
+   站点在 #grouplinks 里只输出平台图标，不输出名字；只有 class 名可用。
+   这里用 :has() 把 class 映射成可读名称（::after 追加在图标后面）。
+
+   映射表共 114 条，逐条来自参考项目 nowtl/ggn-blue-night 的实测结果，
+   不是猜的。:has() 的作用范围严格限定在 #grouplinks 这一棵子树
+   （页面上通常 5–30 个单元格），不会扩散到全站。
+   ========================================================================== */
+
+#grouplinks td::after {
+  content: "";
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  line-height: 1;
+  pointer-events: none;
+}
+
+#grouplinks td:has(.amigacd32)::after { content: "Amiga CD32"; }
+#grouplinks td:has(.amstradcpc)::after { content: "Amstrad CPC"; }
+#grouplinks td:has(.android)::after { content: "Android"; }
+#grouplinks td:has(.applebandaipippin)::after { content: "Apple Bandai Pippin"; }
+#grouplinks td:has(.appleii)::after { content: "Apple II"; }
+#grouplinks td:has(.atari2600)::after { content: "Atari 2600"; }
+#grouplinks td:has(.atari5200)::after { content: "Atari 5200"; }
+#grouplinks td:has(.atari7800)::after { content: "Atari 7800"; }
+#grouplinks td:has(.atarijaguar)::after { content: "Atari Jaguar"; }
+#grouplinks td:has(.atarilynx)::after { content: "Atari Lynx"; }
+#grouplinks td:has(.atarist)::after { content: "Atari ST"; }
+#grouplinks td:has(.bandaiwonderswan)::after { content: "Bandai WonderSwan"; }
+#grouplinks td:has(.bandaiwonderswancolor)::after { content: "Bandai WonderSwan Color"; }
+#grouplinks td:has(.casioloopy)::after { content: "Casio Loopy"; }
+#grouplinks td:has(.casiopv)::after { content: "Casio PV-1000"; }
+#grouplinks td:has(.cats_ost)::after { content: "OST"; }
+#grouplinks td:has(.colecovision)::after { content: "Colecovision"; }
+#grouplinks td:has(.commodore128)::after { content: "Commodore 128"; }
+#grouplinks td:has(.commodore64)::after { content: "Commodore 64"; }
+#grouplinks td:has(.commodoreamiga)::after { content: "Commodore Amiga"; }
+#grouplinks td:has(.commodoreplus)::after { content: "Commodore Plus-4"; }
+#grouplinks td:has(.commodorevic)::after { content: "Commodore VIC-20"; }
+#grouplinks td:has(.creativision)::after { content: "CreatiVision"; }
+#grouplinks td:has(.dos)::after { content: "DOS"; }
+#grouplinks td:has(.dreamcast)::after { content: "Dreamcast"; }
+#grouplinks td:has(.dsiware)::after { content: "DSiWare"; }
+#grouplinks td:has(.emersonarcadia2001)::after { content: "Emerson Arcadia 2001"; }
+#grouplinks td:has(.entexadventurevision)::after { content: "Entex Adventure Vision"; }
+#grouplinks td:has(.epochsupercasettevision)::after { content: "Epoch Super Casette Vision"; }
+#grouplinks td:has(.fairchildchannelf)::after { content: "Fairchild Channel F"; }
+#grouplinks td:has(.funtechsuperacan)::after { content: "Funtech Super Acan"; }
+#grouplinks td:has(.gameboy)::after { content: "Game Boy"; }
+#grouplinks td:has(.gameboyadvance)::after { content: "Game Boy Advance"; }
+#grouplinks td:has(.gameboycolor)::after { content: "Game Boy Color"; }
+#grouplinks td:has(.gamecom)::after { content: "Game.com"; }
+#grouplinks td:has(.gamegear)::after { content: "Game Gear"; }
+#grouplinks td:has(.gameparkgp32)::after { content: "GamePark GP32"; }
+#grouplinks td:has(.generalcomputervectrex)::after { content: "General Computer Vectrex"; }
+#grouplinks td:has(.gizmondo)::after { content: "Gizmondo"; }
+#grouplinks td:has(.hartungamemaster)::after { content: "Hartung Game Master"; }
+#grouplinks td:has(.hartunggamemaster)::after { content: "Hartung Game Master"; }
+#grouplinks td:has(.intellivision)::after { content: "Mattel Intellivision"; }
+#grouplinks td:has(.ios)::after { content: "iOS"; }
+#grouplinks td:has(.linux)::after { content: "Linux"; }
+#grouplinks td:has(.mac)::after { content: "Mac"; }
+#grouplinks td:has(.magnavox)::after { content: "Magnavox-Phillips Odyssey"; }
+#grouplinks td:has(.mastersystem)::after { content: "Master System"; }
+#grouplinks td:has(.mattelintellivision)::after { content: "Mattel Intellivision"; }
+#grouplinks td:has(.megadrive)::after { content: "Mega Drive"; }
+#grouplinks td:has(.memotechmtx)::after { content: "Memotech MTX"; }
+#grouplinks td:has(.milesgordonsamcoupe)::after { content: "Miles Gordon Sam Coupe"; }
+#grouplinks td:has(.msx)::after { content: "MSX"; }
+#grouplinks td:has(.msx2)::after { content: "MSX 2"; }
+#grouplinks td:has(.necpc)::after { content: "NEC PC-98"; }
+#grouplinks td:has(.necsupergrafx)::after { content: "NEC SuperGrafx"; }
+#grouplinks td:has(.necturbografx)::after { content: "NEC TurboGrafx-16"; }
+#grouplinks td:has(.nes)::after { content: "NES"; }
+#grouplinks td:has(.newnintendo3ds)::after { content: "New Nintendo 3DS"; }
+#grouplinks td:has(.newnintendo3dsvc)::after { content: "New 3DS VC"; }
+#grouplinks td:has(.nintendo3ds)::after { content: "Nintendo 3DS"; }
+#grouplinks td:has(.nintendo3dsvc)::after { content: "3DS VC"; }
+#grouplinks td:has(.nintendo64)::after { content: "Nintendo 64"; }
+#grouplinks td:has(.nintendods)::after { content: "Nintendo DS"; }
+#grouplinks td:has(.nintendogamecube)::after { content: "Nintendo GameCube"; }
+#grouplinks td:has(.nokian)::after { content: "Nokia N-Gage"; }
+#grouplinks td:has(.oculusquest)::after { content: "Oculus Quest"; }
+#grouplinks td:has(.ouya)::after { content: "Ouya"; }
+#grouplinks td:has(.philipscd)::after { content: "Philips CD-i"; }
+#grouplinks td:has(.philipsvideopac)::after { content: "Philips Videopac+"; }
+#grouplinks td:has(.phonepda)::after { content: "Phone/PDA"; }
+#grouplinks td:has(.pico)::after { content: "Pico"; }
+#grouplinks td:has(.playstation1)::after { content: "PlayStation 1"; }
+#grouplinks td:has(.playstation2)::after { content: "PlayStation 2"; }
+#grouplinks td:has(.playstation3)::after { content: "PlayStation 3"; }
+#grouplinks td:has(.playstation4)::after { content: "PlayStation 4"; }
+#grouplinks td:has(.playstation5)::after { content: "PlayStation 5"; }
+#grouplinks td:has(.playstationportable)::after { content: "PlayStation Portable"; }
+#grouplinks td:has(.playstationvita)::after { content: "PlayStation Vita"; }
+#grouplinks td:has(.pokemonmini)::after { content: "Pokemon Mini"; }
+#grouplinks td:has(.psonpsp)::after { content: "PS1 on PSP"; }
+#grouplinks td:has(.psponps3)::after { content: "PSP on PS3"; }
+#grouplinks td:has(.rcastudioii)::after { content: "RCA Studio II"; }
+#grouplinks td:has(.retro)::after { content: "Retro - Other"; }
+#grouplinks td:has(.saturn)::after { content: "Saturn"; }
+#grouplinks td:has(.sg)::after { content: "SG-1000"; }
+#grouplinks td:has(.sharpx1)::after { content: "Sharp X1"; }
+#grouplinks td:has(.sharpx68000)::after { content: "Sharp X68000"; }
+#grouplinks td:has(.snes)::after { content: "SNES"; }
+#grouplinks td:has(.snkneogeo)::after { content: "SNK Neo Geo"; }
+#grouplinks td:has(.snkneogeopocket)::after { content: "SNK Neo Geo Pocket"; }
+#grouplinks td:has(.supernes)::after { content: "SNES"; }
+#grouplinks td:has(.switch)::after { content: "Switch"; }
+#grouplinks td:has(.taitotypex)::after { content: "Taito Type X"; }
+#grouplinks td:has(.tandycolorcomputer)::after { content: "Tandy Color Computer"; }
+#grouplinks td:has(.tangerineoric)::after { content: "Tangerine Oric"; }
+#grouplinks td:has(.thomsonmo5)::after { content: "Thomson MO5"; }
+#grouplinks td:has(.turbografx)::after { content: "NEC TurboGrafx-16"; }
+#grouplinks td:has(.vectrex)::after { content: "General Computer Vectrex"; }
+#grouplinks td:has(.virtualboy)::after { content: "Virtual Boy"; }
+#grouplinks td:has(.watarasupervision)::after { content: "Watara Supervision"; }
+#grouplinks td:has(.wii)::after { content: "Wii"; }
+#grouplinks td:has(.wiiu)::after { content: "Wii U"; }
+#grouplinks td:has(.wiiuvc)::after { content: "Wii U VC"; }
+#grouplinks td:has(.wiivc)::after { content: "Wii VC"; }
+#grouplinks td:has(.wiiware)::after { content: "WiiWare"; }
+#grouplinks td:has(.windows)::after { content: "Windows"; }
+#grouplinks td:has(.windows95)::after { content: "Windows 95"; }
+#grouplinks td:has(.windowsxp)::after { content: "Windows XP"; }
+#grouplinks td:has(.wonderswan)::after { content: "Bandai WonderSwan"; }
+#grouplinks td:has(.xbla)::after { content: "XBLA"; }
+#grouplinks td:has(.xbox)::after { content: "Xbox"; }
+#grouplinks td:has(.xbox360)::after { content: "Xbox 360"; }
+#grouplinks td:has(.xboxon360)::after { content: "Xbox on 360"; }
+#grouplinks td:has(.zxspectrum)::after { content: "ZX Spectrum"; }

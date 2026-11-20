@@ -1,0 +1,2493 @@
+/* ==UserStyle==
+@name           Gazelle Dark Morandi xXx
+@namespace      github.com/acesaint/ggn-morandi
+@version        1.0.0
+@description    Dark Morandi theme for GazelleGames. Muted, dark, minimal: rebuilt shell, flat surfaces, hairline borders.
+@author         acesaint
+@license        MIT
+@match          https://gazellegames.net/*
+@match          https://*.gazellegames.net/*
+==/UserStyle== */
+
+/*
+ * 成品由 build.py 拼接，顺序：
+ *   01-tokens     设计变量（唯一允许出现色值的地方）
+ *   02-base       几何中和：清掉 2009 皮肤绝对定位 / 固定高度 / 位图背景 / filter
+ *   03-shell      重写骨架：头部、用户条、导航、搜索、内容网格、页脚、断点
+ *   04-components 通用组件：盒子、表格、表单、按钮、标签
+ *   05-pages      页面级
+ *   06-motion     过渡与 reduced-motion
+ *
+ * 应用范围由 Stylus 的 @match 决定，这里不写 @-moz-document 包裹，
+ * 避免拼接时出现外层块导致后续文件失效。
+ */
+
+/* ==========================================================================
+   01 — 设计变量
+   --------------------------------------------------------------------------
+   全站唯一允许出现十六进制色值的地方。组件层只用变量。
+   对比度均为 WCAG 2.1 实算值（脚本 morandi/contrast.py 可复现）。
+
+   色彩模型：
+     表面 7 级（m-0 最深 → m-6 按下）
+     文字 5 级（tx-hi 最亮 → tx-3 最暗）
+     描边 3 级（ln-hair 极细分隔 → ln-strong 焦点）
+     强调 5 色相 × 2 档：-f 填色（边框/底）、-i 墨色（文字/链接）
+   纪律：同时出现在一屏内的强调色不超过 2 种；绿色只说"好/在传"，
+   红色只说"错/危险"，灰蓝只说"可点"。
+   ========================================================================== */
+
+:root {
+  /* ---- 表面 ---------------------------------------------------------- */
+  --m-0: #171915; /* 凹槽：代码、引用、进度条底、页脚                */
+  --m-1: #222421; /* 页面主背景：body、头部外壳                     */
+  --m-2: #292b28; /* 一级容器：#content、.box、卡片                 */
+  --m-3: #30322e; /* 二级容器：卡头、.colhead、表头、侧栏块          */
+  --m-4: #373a35; /* 三级容器：下拉层、输入框、标签底                */
+  --m-5: #41443e; /* 悬浮：行 hover、按钮 hover                     */
+  --m-6: #4b4f47; /* 按下 / 选中：:active、当前项                    */
+
+  /* ---- 文字 ---------------------------------------------------------- */
+  --tx-hi: #e8e5dc; /* 强调：当前标题、hover 链接    10.5:1 于 m-2 */
+  --tx-0: #d5d2c9;  /* 主文字：正文、表格数据         9.45:1      */
+  --tx-1: #aba99f;  /* 次级：说明、时间、上传者        6.06:1      */
+  --tx-2: #85877f;  /* 辅助：标签、计数（勿用于正文）   3.92:1      */
+  --tx-3: #666961;  /* 禁用、占位                     2.56:1      */
+
+  /* ---- 描边 ---------------------------------------------------------- */
+  --ln-hair: #35372f;   /* 表格行、列表行分隔（主力）  1.18:1 */
+  --ln: #41443e;        /* 卡片外框、输入框            1.44:1 */
+  --ln-strong: #5b6056; /* 焦点环、当前项、标题分隔     2.21:1 */
+
+  /* ---- 强调：-f 填色 / -i 墨色 --------------------------------------- */
+  --sage-f: #687568;  --sage-i: #97a691;  /* 2.95 / 5.56  正向、选中   */
+  --slate-f: #687783; --slate-i: #98a9b6; /* 3.10 / 5.91  链接、信息   */
+  --taupe-f: #82796c; --taupe-i: #b0a48f; /* 3.33 / 5.82  警告        */
+  --mauve-f: #77717b; --mauve-i: #a9a2ae; /* 3.01 / 5.76  已上传      */
+  --wine-f: #795f62;  --wine-i: #b3898c;  /* 2.47 / 4.67  负向        */
+
+  /* ---- 语义 ---------------------------------------------------------- */
+  --link: var(--slate-i);
+  /* 主按钮：填色比 --sage-f 再压暗一级，白字才够 4.54:1（--sage-f 只有 3.85:1） */
+  --btn-primary: #5c6a5c;
+  --btn-primary-hover: #4f5c4f;
+  --link-hover: var(--tx-hi);
+  --ok: #9bb69a;    /* 6.50  做种、正 ratio、freeleech */
+  --warn: #c2ae79;  /* 6.55  通知、H&R 提醒            */
+  --bad: #cb9698;   /* 5.68  下载数、报告、负 ratio     */
+  --sel: var(--sage-i);
+
+  /* ---- 间距（黄金比梯）----------------------------------------------- */
+  --s1: 4px;
+  --s2: 6px;
+  --s3: 10px;
+  --s4: 16px;
+  --s5: 26px;
+  --s6: 42px;
+
+  /* ---- 圆角 ---------------------------------------------------------- */
+  --r1: 3px;
+  --r2: 5px;
+  --r3: 8px;
+
+  /* ---- 字号 ---------------------------------------------------------- */
+  --t-micro: 10px; /* 角标、极密元信息   */
+  --t-xs: 11px;    /* 表头、标签         */
+  --t-sm: 12px;    /* 表格单元、密集 UI   */
+  --t-0: 13px;     /* 正文               */
+  --t-1: 15px;     /* 区块标题            */
+  --t-2: 17px;     /* 页面标题            */
+  --t-3: 21px;     /* 大标题              */
+
+  --lh: 1.618;
+  --lh-tight: 1.382;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    Roboto, "Helvetica Neue", "PingFang SC", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- 骨架 ---------------------------------------------------------- */
+  --shell: 1280px;  /* 内容最大宽度，>=1400px 时放宽到 1360 */
+  --gutter: 16px;
+  --side: 300px;    /* 侧栏宽度（站点自身值）*/
+  --ctl-h: 30px;    /* 控件高 */
+  --bar-h: 38px;    /* 用户条 */
+  --logo-h: 92px;   /* logo 带（原来是 200px）*/
+  --nav-h: 36px;    /* 主导航 */
+
+  /* ---- 层级（只在定位元素上生效）------------------------------------ */
+  --z-drop: 40;
+  --z-nav: 30;
+  --z-head: 20;
+
+  /* ---- 图标 ----------------------------------------------------------
+     内联 SVG，mask + background-color 上色，随文字色自动变化。
+     不引入图标字体、不请求外部文件。整表目前只有 3 个图标。
+     ------------------------------------------------------------------ */
+  --i-menu: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M4 7h16M4 12h16M4 17h16'/></svg>");
+  --i-stats: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M4 20V10M10 20V4M16 20v-7M22 20H2'/></svg>");
+  --i-chev: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+}
+
+/* ==========================================================================
+   站点变量桥接
+   --------------------------------------------------------------------------
+   站点自己的 22 个样式表大量使用 --darkBlue / --lightBlue / --grey 这类变量。
+   在 :root 重新定义它们，站点几百条旧规则会**自动**继承莫兰迪配色，
+   不需要逐条覆盖、不需要 !important —— 这是本主题最省成本的一步。
+
+   注意：这段必须留在未分层的正常级联里。若整表包进 @layer，
+   未分层的站点声明会盖过这些定义，主题会大面积失效。
+   ========================================================================== */
+:root {
+  --white: var(--tx-0);
+  --grey: var(--tx-1);
+  --black: #000;
+
+  --lightBlue: var(--link);
+  --lightBlue30: rgba(152, 169, 182, 0.3);
+
+  --darkBlue: var(--m-3);
+  --darkBlue80: rgba(48, 50, 46, 0.8);
+  --darkBlue50: rgba(48, 50, 46, 0.5);
+  --darkBlue2: var(--m-0);
+
+  --mediumBlue: var(--m-3);
+  --mediumBlue90: rgba(48, 50, 46, 0.9);
+  --mediumBlue50: rgba(48, 50, 46, 0.5);
+
+  --darkGreen: var(--ok);
+  --darkGreen60: rgba(155, 182, 154, 0.6);
+  --lightGreen: var(--sage-i);
+
+  --pink: var(--wine-f);
+  --darkPink: var(--wine-i);
+  --darkRed: var(--bad);
+  --red: var(--bad);
+
+  --upVote: var(--ok);
+  --downVote: var(--bad);
+  --noVote: var(--tx-2);
+
+  --stickyBkg: var(--m-3);
+  --label: rgba(151, 166, 145, 0.1);
+
+  --rowa: #2a2c29;
+  --rowb: #2d2f2b;
+  --rowA60: rgba(42, 44, 41, 0.6);
+  --rowB60: rgba(45, 47, 43, 0.6);
+  --rowAHover: #3a3d37;
+  --rowBHover: #3a3d37;
+
+  /* 种子状态色：降到低饱和，但保留可区分性 */
+  --state-leeching: var(--ok);
+  --state-seeding: var(--sage-i);
+  --state-uploaded: var(--mauve-i);
+  --state-snatched: var(--wine-i);
+
+  /* ratio 阶梯：0-3 坏、4-8 中、9+ 好，全部低饱和 */
+  --ratio-0: #b96a6d;
+  --ratio-1: #bd7373;
+  --ratio-2: #c07d78;
+  --ratio-3: #c2877b;
+  --ratio-4: #b39a7e;
+  --ratio-5: #a8a37f;
+  --ratio-6: #9aac83;
+  --ratio-7: #8fb086;
+  --ratio-8: #8fb58c;
+  --ratio-9: #9bb69a;
+}
+
+/* ==========================================================================
+   02 — 几何中和
+   --------------------------------------------------------------------------
+   站点是 2009 年的皮肤：头部 274px 绝对定位画布、内容定宽 1100px 并下移
+   30px、页脚 absolute 贴底、盒子与表头用位图/渐变做立体感。
+
+   这一层只做三件事：把 position 归零、把 height 改成 auto、把 background /
+   filter 去掉。它**不设计任何东西**——设计全部在 03/04/05。
+
+   !important 台账（本文件仅 5 处，理由逐条写在行尾）：
+     1  td.cats_col                  站点自带 !important，需强制
+     2  .filter_torrents h3          站点硬编码蓝色描边 + !important
+     3  #torrents #content form      站点 -8px/102% 负边距 hack，会撑破网格
+     4  tr.group_torrent td[colspan] 站点 95px 缩进 !important
+     5  tr.group_torrent .edition_info 同上
+   ========================================================================== */
+
+html {
+  background-color: var(--m-1);
+}
+
+/* build:allow-star
+   全站基础盒模型。这是唯一一处通配选择器，且只在样式计算时匹配一次，
+   没有运行时成本。站点自己只给 html/body 设了 border-box，容器全是
+   content-box：实测 #content 设 1280px 后实际占 1312px，页面横向溢出
+   32px。统一成 border-box 之后，宽度、输入框高度、卡片内边距全部可预期。 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  position: static;                 /* 站点：position:absolute */
+  height: auto;
+  background-color: var(--m-1);     /* 去掉 background.jpg + fixed 合成 */
+  background-image: none;
+  background-attachment: scroll;
+  color: var(--tx-0);
+  font-family: var(--font);
+  font-size: var(--t-0);
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
+}
+
+#wrapper {
+  position: static;
+  min-height: 0;
+  padding-bottom: 0;
+}
+
+/* 主内容：1100px 定宽 + top:30px + 渐变 + 重投影 → 常规文档流。
+   position 必须保留 relative：它是内容区里所有绝对定位元素的包含块，
+   改成 static 会让它们逃到 body 上，连 overflow 都裁不住（真实页面实测到的）。 */
+#content {
+  position: relative;
+  top: auto;
+  width: min(var(--shell), 100%);
+  min-height: 0;
+  height: auto;
+  margin: 0 auto;
+  padding: var(--s4);
+  background-image: none;
+  background-color: var(--m-2);
+  border-radius: var(--r3);
+  box-shadow: none;
+}
+
+/* ---- 头部：274px 绝对定位画布 ------------------------------------- */
+#header {
+  position: relative;
+  height: auto;
+  background: none;
+  border: 0;
+}
+
+#logo {
+  height: var(--logo-h);
+  margin-left: 0;
+  border-bottom: 0;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#logo a {
+  height: 100%;
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+#userinfo {
+  position: static;
+  height: auto;
+  background: none;
+  border: 0;
+}
+
+/* 用户条里三个绝对定位的块，全部回到流内 */
+#userinfo_username {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  padding: 0;
+}
+
+#userinfo_minor {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  background-image: none;
+}
+
+#userinfo_stats {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  width: auto;
+  height: auto;
+  padding: 0;
+  background-image: none;
+}
+
+/* 下拉层原机制：top:30px + height:1px + visibility:hidden
+   这里只清几何，显示逻辑在 03-shell 重建 */
+.sub {
+  position: static;
+  top: auto;
+  margin: 0;
+  height: auto;
+  overflow: visible;
+}
+
+#menu {
+  float: none;
+  position: relative;
+  height: auto;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  font-family: var(--font);
+  font-size: var(--t-0);
+}
+
+#menu ul {
+  max-width: none;
+}
+
+#searchbars ul {
+  position: static;
+  right: auto;
+  top: auto;
+  margin-right: 0;
+  height: auto;
+  background: none;
+}
+
+#alerts {
+  position: static;
+  top: auto;
+  width: auto;
+  margin: 0;
+}
+
+#announcement {
+  position: static;
+  top: auto;
+  width: auto;
+  margin: 0;
+}
+
+.donateico {
+  position: static;
+  left: auto;
+  width: auto;
+  margin: 0;
+}
+
+.clan_trophy {
+  position: static;
+  top: auto;
+  right: auto;
+  opacity: 1;
+}
+
+.global_buffs {
+  position: static;
+  top: auto;
+  left: auto;
+  filter: none;
+  background: none;
+  padding: 0;
+}
+
+/* ---- 页脚：absolute 贴底 ----------------------------------------- */
+#footer {
+  position: static;
+  bottom: auto;
+  margin-top: var(--s5);
+  background-color: var(--m-1);
+  border-top: 1px solid var(--ln);
+}
+
+#site_debug {
+  position: static;
+  top: auto;
+  border-bottom: 0;
+  background: none;
+}
+
+/* ---- 盒子与表头：位图 / 渐变 / 负边距 / 投影 --------------------- */
+.box,
+table {
+  background-image: none;
+}
+
+.colhead,
+.colhead_dark,
+.head {
+  margin: 0;
+  width: auto;
+  padding: var(--s3) var(--s3);
+  background-color: var(--m-3);
+  background-image: none;
+  box-shadow: none;
+  border-radius: var(--r2) var(--r2) 0 0;
+  font-size: var(--t-1);
+}
+
+.colhead ul,
+.colhead_dark ul,
+.head ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+blockquote,
+pre {
+  width: auto;
+  filter: none;
+  margin: var(--s3) 0;
+}
+
+/* ---- 剩下的强制项 ------------------------------------------------- */
+td.cats_col {
+  padding: var(--s2) var(--s3) !important; /* 1: 站点 15px/10px 撑高整行 */
+}
+
+.filter_torrents h3 {
+  padding: 0 0 var(--s1) !important;                 /* 2 */
+  border-bottom: 1px solid var(--ln) !important;      /* 2: 站点硬编码 #c6e6f6 */
+}
+
+#torrents #content form[name="filter"] {
+  margin: 0 !important; /* 3: 站点 -8px + 102%，会撑破网格 */
+  width: 100%;
+}
+
+tr.group_torrent td[colspan] {
+  padding-left: var(--s5) !important; /* 4: 站点 95px */
+}
+
+tr.group_torrent td.edition_info {
+  padding-left: var(--s5) !important; /* 5 */
+}
+
+/* ==========================================================================
+   03 — 骨架
+   --------------------------------------------------------------------------
+   头部从 274px 绝对定位画布改成三行网格：
+     row1  [用户条 ....................... 搜索]
+     row2  [             logo 92px            ]
+     row3  [            主导航 36px           ]
+   用 grid 而不是 flex，是因为这些子元素在 DOM 里的顺序不一定就是我们想要的
+   顺序；显式 grid-row 可以只在 CSS 里排序，不必改动 HTML。
+
+   #header > * 只匹配直接子元素（约 5–8 个），不是后代通配，代价可忽略：
+   它的作用是让所有"未知"子元素默认整行，避免它们挤进两列网格。
+   ========================================================================== */
+
+#header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  width: 100%;
+  background-color: var(--m-1);
+  border-bottom: 1px solid var(--ln);
+}
+
+#header > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+/* ---- 1. 用户条 ----------------------------------------------------- */
+#userinfo {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  height: var(--bar-h);
+  padding: 0 var(--gutter);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+#userinfo a {
+  color: var(--tx-1);
+  text-decoration: none;
+}
+
+#userinfo a:hover {
+  color: var(--tx-hi);
+}
+
+#userinfo_username {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  list-style: none;
+  font-size: var(--t-sm);
+}
+
+#userinfo_username li {
+  position: relative;
+  float: none;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0;
+  list-style: none;
+}
+
+#userinfo_username .brackets {
+  margin: 0;
+  padding: 0 var(--s1);
+  font-size: var(--t-xs);
+  color: var(--tx-2);
+  line-height: 1;
+}
+
+#userinfo_username .username_badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 用户名弹层 #us_pop
+   显隐由站点 JS 控制（onmouseover="mcancelclosetime()"），CSS 不去抢：
+   只负责定位与外观。这里强行 visibility/opacity 会把菜单弄坏——这是真实
+   DOM 核对时才发现的。 */
+.sub {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--z-drop);
+  min-width: 184px;
+  padding: var(--s1);
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+.sub span {
+  display: block;
+  width: auto;
+  border: 0;
+  background: none;
+  font-size: var(--t-sm);
+}
+
+.sub span a {
+  display: block;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r1);
+  color: var(--tx-1);
+  white-space: nowrap;
+}
+
+.sub span a:hover {
+  background-color: var(--m-5);
+  color: var(--tx-hi);
+  text-decoration: none;
+}
+
+#userinfo_username {
+  position: relative;
+}
+
+/* ---- 2. 用户条里的两个图标下拉 -------------------------------------
+   站点机制：ul 本身是 32px 的图标块，li 默认 display:none，:hover 时展开。
+   这里保持"表在流内、项在流外"：ul 不改变尺寸（不推挤兄弟元素），
+   li 绝对定位到 ul 下方，并用 translateY 逐项错开。
+
+   为什么用 translateY 而不是 top：站点在 hover 时写了 top:28px
+   （#userinfo_stats:hover li，特异度 1-2-1），会盖掉我们较低特异度的
+   top 值；translateY 它没碰过，可以稳定错开。
+   ------------------------------------------------------------------ */
+#userinfo_stats {
+  margin-left: auto;   /* 真实 DOM 里统计/私信两组位于用户条右端 */
+}
+
+#userinfo_minor,
+#userinfo_stats {
+  flex: 0 0 32px;      /* 不让 flex 把图标按钮压成 16px——真实页面 1100 档会压 */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-radius: var(--r2);
+  z-index: var(--z-drop);
+  cursor: pointer;
+}
+
+#userinfo_minor::before,
+#userinfo_stats::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background-color: var(--tx-1);
+  -webkit-mask: var(--i-menu) center / contain no-repeat;
+  mask: var(--i-menu) center / contain no-repeat;
+}
+
+#userinfo_stats::before {
+  -webkit-mask-image: var(--i-stats);
+  mask-image: var(--i-stats);
+}
+
+#userinfo_minor:hover,
+#userinfo_stats:hover {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-color: var(--m-4);
+}
+
+#userinfo_minor:hover::before,
+#userinfo_stats:hover::before {
+  background-color: var(--tx-hi);
+}
+
+/* 站点 hover 时把 ul 撑高、补 padding-top —— 在这里归零，尺寸恒定 */
+#userinfo_minor:hover {
+  overflow: visible;
+  background-position: 0 0;
+  background-image: none;
+  padding-top: 0;
+}
+
+#userinfo_minor li,
+#userinfo_stats li {
+  position: absolute;
+  top: 100%;
+  right: 0;   /* 两个入口都在用户条右端，面板向左展开才不会顶出视口 */
+  width: 208px;
+  margin: 0 !important; /* 站点自带 margin:0!important，必须同权重覆盖 */
+  border: 1px solid var(--ln);
+  border-bottom: 0;
+  background-color: var(--m-4);
+  border-radius: 0;
+}
+
+#userinfo_minor li:last-child,
+#userinfo_stats li:last-child {
+  border-bottom: 1px solid var(--ln);
+  border-radius: 0 0 var(--r2) var(--r2);
+}
+
+#userinfo_minor li a,
+#userinfo_stats li a {
+  display: block;
+  padding: var(--s2) var(--s3);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+#userinfo_minor li:hover,
+#userinfo_stats li:hover {
+  background-color: var(--m-5);
+  border-color: var(--ln-strong);
+}
+
+#userinfo_minor li a:hover,
+#userinfo_stats li a:hover {
+  color: var(--tx-hi);
+  text-decoration: none;
+}
+
+/* 站点 hover 时写死 top:28px，同特异度后来居上，把它压回 100% */
+#userinfo_stats:hover li {
+  top: 100%;
+}
+
+/* 逐项错开：行高 32px（29px 内容 + 1px 边线 + 2px 余量） */
+#userinfo_minor li:nth-of-type(2), #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
+#userinfo_minor li:nth-of-type(3), #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
+#userinfo_minor li:nth-of-type(4), #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
+#userinfo_minor li:nth-of-type(5), #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
+#userinfo_minor li:nth-of-type(6), #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
+#userinfo_minor li:nth-of-type(7), #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
+#userinfo_minor li:nth-of-type(8), #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
+#userinfo_minor li:nth-of-type(9), #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
+#userinfo_minor li:nth-of-type(10), #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
+#userinfo_minor li:nth-of-type(11), #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
+#userinfo_minor li:nth-of-type(12), #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
+#userinfo_minor li:nth-of-type(13), #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
+#userinfo_minor li:nth-of-type(14), #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
+
+/* 统计项：保留站点自带的小图标（已下载，0 额外成本），只调间距与字色 */
+#userinfo_stats li {
+  padding: var(--s2) var(--s3) var(--s2) 24px;
+  background-repeat: no-repeat;
+  background-position: 6px 50%;
+  font-size: var(--t-xs);
+}
+
+.notification_bubble {
+  position: absolute;
+  top: -2px;
+  left: auto;
+  right: -2px;
+  margin: 0;
+  padding: 0 4px;
+  max-width: none;
+  background-color: var(--warn);
+  color: var(--m-0);
+  border-radius: var(--r1);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  box-shadow: none;
+  line-height: 14px;
+}
+
+/* 捐赠入口：站点用 mario 字体 + 文字阴影，改成普通文字 */
+.donateico {
+  margin-left: 0;
+  font-size: var(--t-xs);
+}
+
+.donateico a {
+  color: var(--sage-i);
+  font-family: var(--font);
+  font-weight: 500;
+  font-size: var(--t-xs);
+  text-shadow: none;
+}
+
+.donateico a:hover {
+  color: var(--tx-hi);
+}
+
+.clan_trophy img {
+  height: auto;
+  max-height: 56px;
+}
+
+/* ---- 3. Logo 带 ---------------------------------------------------- */
+#logo {
+  grid-row: 2;
+  background-color: var(--m-1);
+}
+
+/* ---- 4. 搜索 ------------------------------------------------------- */
+#searchbars {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s2);
+  padding-right: var(--gutter);
+}
+
+#searchbars ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#searchbars ul li {
+  position: relative;
+  float: none;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+}
+
+#searchbars form {
+  margin: 0;
+}
+
+#searchbars input[type="text"],
+#searchbars input[type="search"] {
+  width: 112px;
+  height: 26px;
+  padding: 0 var(--s2);
+  text-align: left;
+  color: var(--tx-0);
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  font-size: var(--t-sm);
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+
+#searchbars input[type="text"]::placeholder {
+  color: var(--tx-2);
+}
+
+#searchbars input[type="text"]:focus,
+#searchbars input[type="search"]:focus {
+  outline: none;
+  background-color: var(--m-4);
+  border-color: var(--ln-strong);
+}
+
+/* 搜索自动补全：站点把它做成了 0 宽 + 负 left，这里还原成正常浮层 */
+#searchbars ul li ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--z-drop);
+  width: 260px;
+  margin: var(--s1) 0 0;
+  padding: var(--s1);
+  height: auto;
+  text-align: left;
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+#searchbars ul.autocomplete_list li {
+  float: none;
+  width: auto;
+  margin: 0;
+  padding: var(--s2) var(--s3);
+  border: 0;
+  border-radius: var(--r1);
+  background: none;
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  text-align: left;
+}
+
+#searchbars ul.autocomplete_list li:hover,
+#searchbars ul.autocomplete_list li.highlight {
+  background-color: var(--m-5);
+  color: var(--tx-hi);
+}
+
+/* ---- 5. 主导航 ----------------------------------------------------- */
+#menu {
+  grid-row: 3;
+  background-color: var(--m-1);
+  border-top: 1px solid var(--ln);
+}
+
+#menu ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  height: var(--nav-h);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  max-width: var(--shell);
+  list-style: none;
+}
+
+#menu ul li {
+  float: none;
+  display: flex;
+  margin: 0;
+}
+
+#menu ul a {
+  display: block;
+  padding: 0 var(--s3);
+  margin: 0;
+  line-height: var(--nav-h);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: var(--r2);
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+
+#menu ul li.active a {
+  color: var(--tx-hi);
+  background-color: var(--m-4);
+  box-shadow: inset 0 -2px 0 var(--sage-i);
+}
+
+#menu ul li a:hover {
+  color: var(--tx-hi);
+  background-color: var(--m-4);
+  text-decoration: none;
+}
+
+/* ---- 6. 公告与提示条 ----------------------------------------------- */
+#alerts {
+  width: min(var(--shell), 100%);
+  margin: var(--s2) auto 0;
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+.alertbar {
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+#announcement {
+  width: min(var(--shell), 100%);
+  margin: var(--s2) auto 0;
+  padding: var(--s2) var(--s4);
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-align: center;
+  box-shadow: none;
+}
+
+.error_message {
+  width: auto;
+  margin: var(--s2) 0;
+  padding: var(--s2) var(--s4);
+  background-color: rgba(203, 150, 152, 0.12);
+  border: 1px solid rgba(203, 150, 152, 0.35);
+  border-radius: var(--r2);
+  color: var(--bad);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.save_message {
+  width: auto;
+  margin: var(--s2) 0;
+  padding: var(--s2) var(--s4);
+  background-color: rgba(155, 182, 154, 0.1);
+  border: 1px solid rgba(155, 182, 154, 0.3);
+  border-radius: var(--r2);
+  color: var(--ok);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  box-shadow: none;
+}
+
+/* ---- 7. 全局 buff -------------------------------------------------- */
+.global_buffs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s2);
+  margin: var(--s2) 0 0;
+  padding: 0 var(--gutter);
+  width: 100%;
+  border: 0;
+  box-shadow: none;
+}
+
+.global_buffs a {
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  text-decoration: none;
+}
+
+.global_buffs a:hover {
+  color: var(--tx-hi);
+}
+
+/* ---- 8. 内容与两栏 -------------------------------------------------
+   站点是 float 两栏（.main_column / .sidebar），不改成 grid：
+   父元素结构未经真实 DOM 确认，改 grid 会让未知的兄弟节点乱序。
+   这里只把宽度接到令牌上，并让容器包含浮动（flow-root）。
+   ------------------------------------------------------------------ */
+#content {
+  display: flow-root;
+  margin: var(--s4) auto var(--s6);
+}
+
+.main_column {
+  float: left;
+  width: calc(100% - var(--side) - var(--s5));
+}
+
+.sidebar {
+  float: right;
+  width: var(--side);
+}
+
+.sidebar .box {
+  margin-top: 0;
+  margin-bottom: var(--s3);
+}
+
+.sidebar img {
+  max-width: 100%;
+}
+
+/* ---- 9. 页脚 ------------------------------------------------------- */
+#footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2) var(--s4);
+  padding: var(--s3) var(--gutter) var(--s4);
+  font-size: var(--t-xs);
+  color: var(--tx-2);
+  line-height: 1.5;
+}
+
+#footer a {
+  color: var(--tx-2);
+}
+
+#footer a:hover {
+  color: var(--tx-0);
+}
+
+#server_stats,
+#toplink,
+#copyright p:nth-of-type(2) {
+  float: none;
+  width: auto;
+  height: auto;
+  padding: 0;
+  background: none;
+}
+
+#toplink {
+  text-align: right;
+}
+
+#site_debug {
+  padding: var(--s2) 0;
+  color: var(--tx-3);
+  font-size: var(--t-micro);
+}
+
+/* ---- 10. 断点 ------------------------------------------------------
+   与站点自身的断点对齐（1100 / 800），避免和它的移动皮肤互相打架。
+   ------------------------------------------------------------------ */
+@media (max-width: 1399px) {
+  :root {
+    --shell: 1160px;
+  }
+}
+
+@media (max-width: 1099px) {
+  /* 与站点同断点：这一档仍是两列（用户条 + 搜索同一行），只压缩 logo */
+  :root {
+    --shell: 100%;
+    --logo-h: 76px;
+  }
+
+  #content {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  /* 单列堆叠：logo → 用户条 → 搜索 → 导航 */
+  :root {
+    --logo-h: 64px;
+    --bar-h: 34px;
+    --nav-h: 34px;
+  }
+
+  #header > * {
+    grid-column: 1 / -1;
+  }
+
+  #logo {
+    grid-row: 1;
+  }
+
+  #userinfo {
+    grid-row: 2;
+    height: var(--bar-h);
+  }
+
+  #searchbars {
+    grid-row: 3;
+    justify-content: flex-start;
+    padding: 0 var(--gutter) var(--s2);
+  }
+
+  #menu {
+    grid-row: 4;
+  }
+
+  #menu ul {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  #menu ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  #searchbars ul {
+    flex-wrap: wrap;
+  }
+
+  #searchbars input[type="text"],
+  #searchbars input[type="search"] {
+    width: 108px;
+  }
+
+  #content {
+    padding: var(--s3);
+  }
+
+
+  /* 真实 DOM：首页两栏是 .sidebar 与 .main_column_bg（.main_column 嵌在里面），
+     且 .sidebar 在 DOM 里排在前面。单列时必须把正文提到前面，否则先看到侧栏。 */
+  #content .thin:has(> .sidebar) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #content .thin:has(> .sidebar) > .main_column_bg {
+    order: 1;
+  }
+
+  #content .thin:has(> .sidebar) > .sidebar {
+    order: 2;
+  }
+
+  .main_column_bg,
+  .main_column,
+  .sidebar {
+    float: none;
+    width: 100%;
+  }
+
+  .sidebar {
+    margin-top: var(--s4);
+  }
+
+  /* 窄屏用户条：用户名 + 编辑/登出/捐赠 + 两组图标，500px 装不下一行，允许折行 */
+  #userinfo {
+    height: auto;
+    min-height: var(--bar-h);
+    flex-wrap: wrap;
+    row-gap: 2px;
+    padding: 4px var(--gutter);
+  }
+
+  .donateico {
+    display: none; /* 移动端让位给搜索框；捐赠入口在页脚仍有链接 */
+  }
+}
+
+/* ==========================================================================
+   04 — 组件：盒子、表格、表单、按钮、标签、进度条
+   --------------------------------------------------------------------------
+   三条贯穿全篇的规则：
+
+   1) 分层靠 1px 线，不靠阴影。站点用 box-shadow + 渐变 + 位图堆立体感，
+      在深色低饱和里只会显得脏；这里一律压平，层级交给 --m-2/3/4 三档。
+   2) 表格的密度用"行内边距 + 细分隔线"控制，不给行加过渡。
+      一个种子列表几百行，hover 时重绘背景在滚动中就是纯损耗。
+   3) 数字列用等宽数字（tabular-nums），否则大小/做种数在列里会跳动。
+
+   悬停为什么写两组选择器：
+   站点用 #torrents .rowa td 设行背景（特异度 1-1-1）。只写 .rowa:hover td
+   （0-3-2）会被它压住，hover 不生效。所以给浏览页补一组带 #torrents 的
+   （1-2-2），其余页面用通用组——比加 !important 干净。
+   ========================================================================== */
+
+/* ---- 1. 盒子 ------------------------------------------------------- */
+.box {
+  padding: var(--s3);
+  margin: var(--s3) 0 0;
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+}
+
+.box .head {
+  margin: calc(-1 * var(--s3)) calc(-1 * var(--s3)) var(--s3);
+  padding: var(--s2) var(--s3);
+  background-color: var(--m-3);
+  border-bottom: 1px solid var(--ln);
+  border-radius: var(--r3) var(--r3) 0 0;
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.box .head a {
+  color: var(--tx-0);
+  font-size: inherit;
+}
+
+/* 站点在浏览页把盒子往上提了 27px 去咬合绝对定位的筛选面板 */
+.filter_torrents .box {
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+}
+
+.filter_torrents {
+  width: 100%;
+  margin: 0 0 var(--s3);
+}
+
+.filter_torrents .submit {
+  width: auto;
+}
+
+.pad {
+  padding: var(--s3);
+}
+
+/* 内嵌在盒子里的表格不再自带外框 */
+.box table {
+  background: none;
+}
+
+/* ---- 2. 表格 ------------------------------------------------------- */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+th,
+td {
+  padding: var(--s2) var(--s3);
+  vertical-align: middle;
+}
+
+th {
+  text-align: left;
+}
+
+.torrent_table td,
+.rowa td,
+.rowb td,
+.row_a td,
+.row_b td {
+  font-size: var(--t-sm);
+  line-height: var(--lh-tight);
+}
+
+/* 行分隔：极细一线，不是网格 */
+.torrent_table td,
+.rowa td,
+.rowb td,
+.row_a td,
+.row_b td {
+  border-bottom: 1px solid var(--ln-hair);
+}
+
+.torrent_table tr.rowa,
+.torrent_table tr.rowb,
+.torrent_table tr.row_a,
+.torrent_table tr.row_b {
+  height: auto;
+}
+
+/* 数字列 */
+td.nobr,
+.last td {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 表头 */
+.colhead,
+.colhead_dark {
+  background-color: var(--m-3);
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.colhead td,
+.colhead_dark td {
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--ln);
+  background: transparent;
+}
+
+.colhead a,
+.colhead_dark a {
+  color: var(--tx-1);
+  font-weight: 600;
+}
+
+.colhead a:hover,
+.colhead_dark a:hover {
+  color: var(--tx-hi);
+}
+
+.coltotals {
+  background-color: var(--m-3);
+  border-top: 1px solid var(--ln);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+.coltotals td {
+  padding: var(--s2) var(--s3);
+}
+
+/* ---- 3. 行悬停（不给行加过渡）------------------------------------- */
+.rowa:hover td,
+.rowb:hover td,
+.row_a:hover td,
+.row_b:hover td,
+.torrent_table tr.group:hover td,
+.torrent_table tr.group_torrent:hover td {
+  background-color: var(--m-5);
+}
+
+#torrents tr.rowa:hover td,
+#torrents tr.rowb:hover td,
+#torrents tr.row_a:hover td,
+#torrents tr.row_b:hover td,
+#torrents tr.group:hover td,
+#torrents tr.group_torrent:hover td {
+  background-color: var(--m-5);
+}
+
+/* 展开后的子行：比组行低一级，靠左侧缩进与字色区分 */
+.torrent_table tr.group_torrent td {
+  color: var(--tx-1);
+  background-color: var(--m-2);
+}
+
+.torrent_table tr.group_torrent:hover td {
+  background-color: var(--m-4);
+}
+
+/* 种子标题：站点给到 1.6em 加粗，在密集列表里太吵，压到正文级 */
+.group,
+.torrent {
+  font-size: var(--t-sm);
+}
+
+.group a,
+.torrent a,
+#torrents .group a,
+#torrents .torrent a {
+  font-size: var(--t-0);
+  font-weight: 500;
+  line-height: var(--lh-tight);
+  margin-right: 0;
+}
+
+.group a:hover,
+.torrent a:hover {
+  color: var(--link-hover);
+}
+
+/* 置顶：左侧一道强调线，不整行变色 */
+.sticky td {
+  border-top: 1px solid var(--ln-strong);
+  border-bottom: 1px solid var(--ln-strong);
+}
+
+.sticky #displayname:before {
+  display: none;
+}
+
+/* ---- 4. 标签与评分 ------------------------------------------------- */
+.tags {
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+.tags a,
+#torrents .tags a,
+.group .tags a,
+.torrent .tags a {
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.tags a:hover {
+  color: var(--tx-0);
+}
+
+.rating_container {
+  background-color: var(--m-3);
+  border: 1px solid var(--ln-hair);
+  border-radius: var(--r1);
+  color: var(--tx-2);
+}
+
+.rating_container:hover {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+}
+
+/* ---- 5. 表单控件 --------------------------------------------------- */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: var(--t-sm);
+  color: var(--tx-0);
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+select {
+  height: var(--ctl-h);
+  padding: 0 var(--s2);
+}
+
+textarea {
+  padding: var(--s2);
+  line-height: var(--lh);
+  resize: vertical;
+}
+
+input[type="text"]:hover,
+input[type="search"]:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--ln-strong);
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--sage-f);
+  background-color: var(--m-3);
+}
+
+/* 复选框与单选框：交给浏览器原生绘制，只统一强调色，不自己画 */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  margin: 0 4px 0 0;
+  accent-color: var(--sage-i);
+  vertical-align: -2px;
+}
+
+select {
+  min-width: 132px;
+  cursor: pointer;
+}
+
+/* ---- 6. 按钮 ------------------------------------------------------- */
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+button,
+.submit input {
+  height: var(--ctl-h);
+  padding: 0 var(--s4);
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  box-shadow: none;
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover,
+button:hover,
+.submit input:hover {
+  background-color: var(--m-5);
+  border-color: var(--ln-strong);
+  color: var(--tx-hi);
+}
+
+/* 主按钮：只有"提交/搜索/保存"这一级用它 */
+.submit input,
+input[type="submit"] {
+  background-color: var(--btn-primary);
+  border-color: var(--btn-primary);
+  color: var(--tx-hi);
+}
+
+.submit input:hover,
+input[type="submit"]:hover {
+  background-color: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+  color: var(--tx-hi);
+}
+
+/* 站点给 .submit input 加了 0 圆角 + 投影 */
+.submit input {
+  border-radius: var(--r2);
+  box-shadow: none;
+  height: var(--ctl-h);
+  margin: 0;
+}
+
+/* ---- 7. 表单排版 --------------------------------------------------- */
+td.label,
+.label {
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+td.label {
+  white-space: nowrap;
+}
+
+/* ---- 8. 进度条 ----------------------------------------------------- */
+#progress_bar {
+  width: 100%;
+  height: 12px;
+  padding: 0;
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  overflow: hidden;
+}
+
+.large_progress_bar {
+  width: 100%;
+  padding: 0;
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  box-shadow: none;
+}
+
+.large_progress_bar .main_bar {
+  background-color: var(--btn-primary);
+  background-image: none;
+  box-shadow: none;
+  border-radius: var(--r1);
+}
+
+/* ---- 9. 引用、代码、分隔 ------------------------------------------- */
+blockquote,
+pre {
+  padding: var(--s3) var(--s4);
+  background-color: var(--m-0);
+  border: 1px solid var(--ln-hair);
+  border-left: 2px solid var(--ln-strong);
+  border-radius: var(--r2);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+pre,
+code {
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+}
+
+code {
+  padding: 1px 5px;
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  color: var(--tx-0);
+}
+
+hr {
+  height: 1px;
+  border: 0;
+  background-color: var(--ln);
+  margin: var(--s4) 0;
+}
+
+/* ---- 10. 标题排版 ---------------------------------------------------
+   站点把页面标题写成 .thin h2:first-of-type / .header h2，并挂一条
+   var(--lightBlue) 的下划线——桥接之后会变成一条蓝线，很跳。
+   这里统一成描边色，字号走令牌，避免各页标题大小不一。
+   ------------------------------------------------------------------ */
+#content h1,
+#content h2,
+#content h3 {
+  color: var(--tx-0);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: var(--s2) 0 var(--s3);
+}
+
+#content h2 {
+  font-size: var(--t-2);
+}
+
+#content h3 {
+  font-size: var(--t-1);
+}
+
+/* #content h2 的特异度（1-0-1）压得住站点那几条 .header h2 / .thin h2:first-of-type */
+#content h2,
+#rules h3,
+#chat h3 {
+  border-bottom: 1px solid var(--ln);
+  padding-bottom: var(--s1);
+}
+
+/* 请求页把蓝色描边写成了硬编码值 + !important，只能同权重强制覆盖 */
+#requests h2 {
+  border-bottom-color: var(--ln) !important;
+  width: auto;
+  color: var(--tx-0);
+}
+
+/* 小块标题（论坛分区、资料页小节）不应比正文还大 */
+.min_padding,
+.forum_list h3 {
+  font-size: var(--t-sm);
+}
+
+/* ==========================================================================
+   05 — 页面级
+   --------------------------------------------------------------------------
+   只写"这一页才有"的东西。通用组件已由 04 覆盖，这里不重复。
+
+   站点这几页的历史包袱最重：浏览页的筛选面板是用绝对定位 + 负边距拼出来的
+   （`.filter_torrents{width:865px}`、`.box{margin-top:-27px; padding-top:42px}`、
+   `td{top:-25px}`），论坛用 `<td>` 做栅格并把 `text-align` 全局居中，
+   资料页把 .head 压成 21px 固定高。这些都必须在页面层显式解开。
+   ========================================================================== */
+
+/* ---- 1. 浏览 / 搜索页：筛选面板 ------------------------------------ */
+.filter_torrents {
+  width: 100%;
+  margin: 0 0 var(--s4);
+}
+
+/* 站点把它当标签画在盒子外面（position:relative; top:4px; left:15px）*/
+.filter_torrents h3 {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0 0 var(--s2);
+  padding: 0 0 var(--s1);
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 600;
+}
+
+.filter_torrents .box {
+  display: block;
+  margin: 0;
+  padding: var(--s3);
+}
+
+.filter_torrents .submit {
+  width: auto;
+  margin: 0;
+}
+
+.filter_torrents .submit span {
+  float: none;
+}
+
+.filter_torrents .submit input {
+  float: none;
+  position: static;
+  right: auto;
+}
+
+/* basic 档：站点用 top:-25px 把两列拽上来对齐，改为常规流 */
+.filter_torrents.basic .submit {
+  margin-top: 0;
+}
+
+.filter_torrents.basic .submit span {
+  position: static;
+  top: auto;
+  left: auto;
+}
+
+.filter_torrents.basic tr:nth-of-type(2) td:nth-of-type(3),
+.filter_torrents.basic tr:nth-of-type(2) td:nth-of-type(4) {
+  position: static;
+  top: auto;
+}
+
+/* 平台复选框区：原来靠彩色底块区分 */
+#torrents .filter_torrents #platcheckbox td[colspan="5"] {
+  padding: var(--s2);
+  background-color: transparent;
+  border-top: 1px solid var(--ln-hair);
+}
+
+#torrents .filter_torrents td.label {
+  background-color: transparent;
+  color: var(--tx-1);
+}
+
+/* 站内搜索建议：绝对定位拼出来的 0 宽层，改成常规流 */
+#torrents #autocomplete {
+  position: static;
+  width: 100%;
+  margin: 0;
+}
+
+#torrents ul#torrentsbrowsecomplete {
+  position: static;
+  top: auto;
+  left: auto;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#torrents #torrentsbrowsecomplete li {
+  position: static;
+  margin: 0;
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--ln-hair);
+  border-radius: 0;
+  background-color: var(--m-2);
+}
+
+#torrents #torrentsbrowsecomplete li:hover {
+  background-color: var(--m-4);
+}
+
+/* 分类标签行 */
+#taglist {
+  width: auto;
+  margin: 0 0 var(--s2);
+  font-size: var(--t-xs);
+}
+
+#taglist a,
+a.toggle_tags {
+  padding: 0 var(--s1);
+  color: var(--tx-2);
+}
+
+#taglist a:hover,
+a.toggle_tags:hover {
+  color: var(--tx-0);
+}
+
+/* ---- 2. 种子组详情页 ----------------------------------------------- */
+/* 平台页签：站点是 float:left 的 td，改成 flex 胶囊 */
+#grouplinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+  width: 100%;
+  margin: var(--s2) 0 var(--s3);
+  border: 0;
+  background: none;
+}
+
+#grouplinks tbody,
+#grouplinks tr {
+  display: contents;
+}
+
+#grouplinks td {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  float: none;
+  padding: var(--s1) var(--s3);
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#grouplinks td:hover {
+  background-color: var(--m-4);
+  border-color: var(--ln-strong);
+  color: var(--tx-0);
+}
+
+#grouplinks td a {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 侧栏：站点在详情页把它放在左侧、250px、且把 .box 也钉死 250px */
+#torrents .sidebar {
+  width: 280px;
+}
+
+#torrents .sidebar .box {
+  width: auto;
+}
+
+#torrents .sidebar .head {
+  margin-bottom: var(--s2);
+}
+
+/* 封面：保留 2:3 海报比例，hover 放大收进圆角里 */
+.box_albumart img {
+  border-radius: var(--r2);
+  transition: transform 0.18s ease;
+}
+
+.box_albumart:hover img {
+  transform: scale(1.06);
+}
+
+/* 相似游戏网格 */
+.similar ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.similar li.similar_group {
+  width: calc(20% - var(--s2));
+  min-width: 112px;
+  margin: 0;
+}
+
+.similar .similar_group > a img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--r1);
+}
+
+.similar .similar_votes {
+  width: 100%;
+  padding: var(--s1) 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 0 0 var(--r1) var(--r1);
+  font-size: var(--t-micro);
+}
+
+/* ---- 3. 论坛 ------------------------------------------------------- */
+#forums .forum_post .body {
+  width: 100%;
+  margin: 0;
+  padding: var(--s3) var(--s4);
+}
+
+#forums td.body {
+  padding: var(--s3) var(--s4);
+}
+
+/* 站点在头像单元格上挂了 10px 投影 */
+td.avatar {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+#forums td.avatar img {
+  border-radius: var(--r2);
+  margin-top: 0;
+}
+
+.forumstat {
+  padding: var(--s1) var(--s2);
+  background-color: var(--m-2);
+  border-radius: var(--r1);
+  color: var(--tx-2);
+  font-size: var(--t-micro);
+}
+
+.forumstat:hover {
+  color: var(--tx-0);
+}
+
+/* 点赞行：站点用 2px 黑线分隔 */
+tr.likes {
+  border-top: 1px solid var(--ln);
+}
+
+tr.likes td {
+  background-color: var(--m-2);
+  color: var(--tx-2);
+  padding: var(--s1) var(--s3);
+}
+
+/* 论坛列表里的小标题 */
+#forums .forum_list h3 {
+  margin: 0 0 var(--s2);
+  padding: 0 0 var(--s1);
+  border-bottom: 1px solid var(--ln);
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+}
+
+/* 未读/已读气球图标：保留站点位图，只统一尺寸与对齐 */
+#forums #content .thin td.read,
+#forums #content .thin td.unread,
+#forums #content .thin td.read_sticky,
+#forums #content .thin td.unread_sticky,
+#forums #content .thin td.read_locked,
+#forums #content .thin td.unread_locked,
+#forums #content .thin td.read_locked_sticky,
+#forums #content .thin td.unread_locked_sticky {
+  background-color: transparent;
+  background-position: center;
+}
+
+/* 帖子里的图片与视频：去掉 drop-shadow，改细边框 */
+#forums .forum_post td.body img,
+#forums .forum_post td.body video,
+#forums .forum_post td.body iframe {
+  filter: none;
+  border-radius: var(--r1);
+  box-shadow: none;
+}
+
+/* ---- 4. 个人资料 --------------------------------------------------- */
+/* 站点把 .head 压成 21px 固定高 + 98% 宽 */
+#user .head {
+  display: block;
+  height: auto;
+  width: auto;
+}
+
+.profile .box_main_info {
+  display: block;
+  padding: var(--s3);
+  background: none;
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+}
+
+.profile .box_image_avatar img {
+  filter: none;
+  border-radius: var(--r2);
+}
+
+.profile .box_stats {
+  background: none;
+}
+
+.profile .box_stats ul {
+  margin: 0;
+}
+
+.profile .box_stats #hnrs {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.profile .box_stats .online {
+  color: var(--ok);
+}
+
+.profile .box_stats .offline {
+  color: var(--tx-3);
+  opacity: 1;
+}
+
+.profile .box_stats .status {
+  font-size: var(--t-1);
+}
+
+/* ---- 5. 合集 / 封面网格 -------------------------------------------- */
+ul.collage_images li,
+#collage_table td {
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  overflow: hidden;
+}
+
+ul.collage_images li img {
+  border-radius: var(--r1);
+}
+
+/* ---- 6. 面包屑与分页 ----------------------------------------------- */
+div.breadcrumbs {
+  padding: 0 0 var(--s2);
+  text-align: left;
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+}
+
+.linkbox {
+  margin: var(--s3) 0;
+  font-size: var(--t-xs);
+  line-height: 1.8;
+}
+
+.linkbox a {
+  padding: 2px var(--s2);
+  border-radius: var(--r1);
+}
+
+.linkbox a:hover {
+  background-color: var(--m-4);
+  text-decoration: none;
+}
+
+.pager strong {
+  color: var(--tx-0);
+  font-weight: 600;
+}
+
+/* 排序用的表头链接不换行，避免列宽抖动 */
+.colhead a {
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   05b — 平台页签的中文/英文名字
+   --------------------------------------------------------------------------
+   站点在 #grouplinks 里只输出平台图标，不输出名字；只有 class 名可用。
+   这里用 :has() 把 class 映射成可读名称（::after 追加在图标后面）。
+
+   映射表共 114 条，逐条来自参考项目 nowtl/ggn-blue-night 的实测结果，
+   不是猜的。:has() 的作用范围严格限定在 #grouplinks 这一棵子树
+   （页面上通常 5–30 个单元格），不会扩散到全站。
+   ========================================================================== */
+
+#grouplinks td::after {
+  content: "";
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  line-height: 1;
+  pointer-events: none;
+}
+
+#grouplinks td:has(.amigacd32)::after { content: "Amiga CD32"; }
+#grouplinks td:has(.amstradcpc)::after { content: "Amstrad CPC"; }
+#grouplinks td:has(.android)::after { content: "Android"; }
+#grouplinks td:has(.applebandaipippin)::after { content: "Apple Bandai Pippin"; }
+#grouplinks td:has(.appleii)::after { content: "Apple II"; }
+#grouplinks td:has(.atari2600)::after { content: "Atari 2600"; }
+#grouplinks td:has(.atari5200)::after { content: "Atari 5200"; }
+#grouplinks td:has(.atari7800)::after { content: "Atari 7800"; }
+#grouplinks td:has(.atarijaguar)::after { content: "Atari Jaguar"; }
+#grouplinks td:has(.atarilynx)::after { content: "Atari Lynx"; }
+#grouplinks td:has(.atarist)::after { content: "Atari ST"; }
+#grouplinks td:has(.bandaiwonderswan)::after { content: "Bandai WonderSwan"; }
+#grouplinks td:has(.bandaiwonderswancolor)::after { content: "Bandai WonderSwan Color"; }
+#grouplinks td:has(.casioloopy)::after { content: "Casio Loopy"; }
+#grouplinks td:has(.casiopv)::after { content: "Casio PV-1000"; }
+#grouplinks td:has(.cats_ost)::after { content: "OST"; }
+#grouplinks td:has(.colecovision)::after { content: "Colecovision"; }
+#grouplinks td:has(.commodore128)::after { content: "Commodore 128"; }
+#grouplinks td:has(.commodore64)::after { content: "Commodore 64"; }
+#grouplinks td:has(.commodoreamiga)::after { content: "Commodore Amiga"; }
+#grouplinks td:has(.commodoreplus)::after { content: "Commodore Plus-4"; }
+#grouplinks td:has(.commodorevic)::after { content: "Commodore VIC-20"; }
+#grouplinks td:has(.creativision)::after { content: "CreatiVision"; }
+#grouplinks td:has(.dos)::after { content: "DOS"; }
+#grouplinks td:has(.dreamcast)::after { content: "Dreamcast"; }
+#grouplinks td:has(.dsiware)::after { content: "DSiWare"; }
+#grouplinks td:has(.emersonarcadia2001)::after { content: "Emerson Arcadia 2001"; }
+#grouplinks td:has(.entexadventurevision)::after { content: "Entex Adventure Vision"; }
+#grouplinks td:has(.epochsupercasettevision)::after { content: "Epoch Super Casette Vision"; }
+#grouplinks td:has(.fairchildchannelf)::after { content: "Fairchild Channel F"; }
+#grouplinks td:has(.funtechsuperacan)::after { content: "Funtech Super Acan"; }
+#grouplinks td:has(.gameboy)::after { content: "Game Boy"; }
+#grouplinks td:has(.gameboyadvance)::after { content: "Game Boy Advance"; }
+#grouplinks td:has(.gameboycolor)::after { content: "Game Boy Color"; }
+#grouplinks td:has(.gamecom)::after { content: "Game.com"; }
+#grouplinks td:has(.gamegear)::after { content: "Game Gear"; }
+#grouplinks td:has(.gameparkgp32)::after { content: "GamePark GP32"; }
+#grouplinks td:has(.generalcomputervectrex)::after { content: "General Computer Vectrex"; }
+#grouplinks td:has(.gizmondo)::after { content: "Gizmondo"; }
+#grouplinks td:has(.hartungamemaster)::after { content: "Hartung Game Master"; }
+#grouplinks td:has(.hartunggamemaster)::after { content: "Hartung Game Master"; }
+#grouplinks td:has(.intellivision)::after { content: "Mattel Intellivision"; }
+#grouplinks td:has(.ios)::after { content: "iOS"; }
+#grouplinks td:has(.linux)::after { content: "Linux"; }
+#grouplinks td:has(.mac)::after { content: "Mac"; }
+#grouplinks td:has(.magnavox)::after { content: "Magnavox-Phillips Odyssey"; }
+#grouplinks td:has(.mastersystem)::after { content: "Master System"; }
+#grouplinks td:has(.mattelintellivision)::after { content: "Mattel Intellivision"; }
+#grouplinks td:has(.megadrive)::after { content: "Mega Drive"; }
+#grouplinks td:has(.memotechmtx)::after { content: "Memotech MTX"; }
+#grouplinks td:has(.milesgordonsamcoupe)::after { content: "Miles Gordon Sam Coupe"; }
+#grouplinks td:has(.msx)::after { content: "MSX"; }
+#grouplinks td:has(.msx2)::after { content: "MSX 2"; }
+#grouplinks td:has(.necpc)::after { content: "NEC PC-98"; }
+#grouplinks td:has(.necsupergrafx)::after { content: "NEC SuperGrafx"; }
+#grouplinks td:has(.necturbografx)::after { content: "NEC TurboGrafx-16"; }
+#grouplinks td:has(.nes)::after { content: "NES"; }
+#grouplinks td:has(.newnintendo3ds)::after { content: "New Nintendo 3DS"; }
+#grouplinks td:has(.newnintendo3dsvc)::after { content: "New 3DS VC"; }
+#grouplinks td:has(.nintendo3ds)::after { content: "Nintendo 3DS"; }
+#grouplinks td:has(.nintendo3dsvc)::after { content: "3DS VC"; }
+#grouplinks td:has(.nintendo64)::after { content: "Nintendo 64"; }
+#grouplinks td:has(.nintendods)::after { content: "Nintendo DS"; }
+#grouplinks td:has(.nintendogamecube)::after { content: "Nintendo GameCube"; }
+#grouplinks td:has(.nokian)::after { content: "Nokia N-Gage"; }
+#grouplinks td:has(.oculusquest)::after { content: "Oculus Quest"; }
+#grouplinks td:has(.ouya)::after { content: "Ouya"; }
+#grouplinks td:has(.philipscd)::after { content: "Philips CD-i"; }
+#grouplinks td:has(.philipsvideopac)::after { content: "Philips Videopac+"; }
+#grouplinks td:has(.phonepda)::after { content: "Phone/PDA"; }
+#grouplinks td:has(.pico)::after { content: "Pico"; }
+#grouplinks td:has(.playstation1)::after { content: "PlayStation 1"; }
+#grouplinks td:has(.playstation2)::after { content: "PlayStation 2"; }
+#grouplinks td:has(.playstation3)::after { content: "PlayStation 3"; }
+#grouplinks td:has(.playstation4)::after { content: "PlayStation 4"; }
+#grouplinks td:has(.playstation5)::after { content: "PlayStation 5"; }
+#grouplinks td:has(.playstationportable)::after { content: "PlayStation Portable"; }
+#grouplinks td:has(.playstationvita)::after { content: "PlayStation Vita"; }
+#grouplinks td:has(.pokemonmini)::after { content: "Pokemon Mini"; }
+#grouplinks td:has(.psonpsp)::after { content: "PS1 on PSP"; }
+#grouplinks td:has(.psponps3)::after { content: "PSP on PS3"; }
+#grouplinks td:has(.rcastudioii)::after { content: "RCA Studio II"; }
+#grouplinks td:has(.retro)::after { content: "Retro - Other"; }
+#grouplinks td:has(.saturn)::after { content: "Saturn"; }
+#grouplinks td:has(.sg)::after { content: "SG-1000"; }
+#grouplinks td:has(.sharpx1)::after { content: "Sharp X1"; }
+#grouplinks td:has(.sharpx68000)::after { content: "Sharp X68000"; }
+#grouplinks td:has(.snes)::after { content: "SNES"; }
+#grouplinks td:has(.snkneogeo)::after { content: "SNK Neo Geo"; }
+#grouplinks td:has(.snkneogeopocket)::after { content: "SNK Neo Geo Pocket"; }
+#grouplinks td:has(.supernes)::after { content: "SNES"; }
+#grouplinks td:has(.switch)::after { content: "Switch"; }
+#grouplinks td:has(.taitotypex)::after { content: "Taito Type X"; }
+#grouplinks td:has(.tandycolorcomputer)::after { content: "Tandy Color Computer"; }
+#grouplinks td:has(.tangerineoric)::after { content: "Tangerine Oric"; }
+#grouplinks td:has(.thomsonmo5)::after { content: "Thomson MO5"; }
+#grouplinks td:has(.turbografx)::after { content: "NEC TurboGrafx-16"; }
+#grouplinks td:has(.vectrex)::after { content: "General Computer Vectrex"; }
+#grouplinks td:has(.virtualboy)::after { content: "Virtual Boy"; }
+#grouplinks td:has(.watarasupervision)::after { content: "Watara Supervision"; }
+#grouplinks td:has(.wii)::after { content: "Wii"; }
+#grouplinks td:has(.wiiu)::after { content: "Wii U"; }
+#grouplinks td:has(.wiiuvc)::after { content: "Wii U VC"; }
+#grouplinks td:has(.wiivc)::after { content: "Wii VC"; }
+#grouplinks td:has(.wiiware)::after { content: "WiiWare"; }
+#grouplinks td:has(.windows)::after { content: "Windows"; }
+#grouplinks td:has(.windows95)::after { content: "Windows 95"; }
+#grouplinks td:has(.windowsxp)::after { content: "Windows XP"; }
+#grouplinks td:has(.wonderswan)::after { content: "Bandai WonderSwan"; }
+#grouplinks td:has(.xbla)::after { content: "XBLA"; }
+#grouplinks td:has(.xbox)::after { content: "Xbox"; }
+#grouplinks td:has(.xbox360)::after { content: "Xbox 360"; }
+#grouplinks td:has(.xboxon360)::after { content: "Xbox on 360"; }
+#grouplinks td:has(.zxspectrum)::after { content: "ZX Spectrum"; }
+
+/* ==========================================================================
+   05c — 商店 / 背包 / 装备 / 合成 / 交易（Palooza 五页）
+   --------------------------------------------------------------------------
+   这五页不是常规表格页面：它们是**用位图搭出来的场景**——800px 画布、
+   绝对坐标的物品格、`crafting_panel.jpg` 这类贴图，外挂在 `body.items_style`
+   这个类上，配一套深棕配色。
+
+   处理原则（保守）：
+     · 不动场景坐标、不动画布尺寸、不动物品格的绝对定位——没有真页面前重排
+       坐标必然错位，那是"破坏功能"，不是"美化"。
+     · 只做三件事：把棕色配色换到莫兰迪、修掉会撑破页面的布局 bug、
+       统一物品卡片与消息行。
+     · 保留下来的位图（owned/featured/new 角标）是有信息量的，不删。
+
+   注意：本段是按站点 CSS 写的，尚未经过真实页面验证（见 README 的待办）。
+   ========================================================================== */
+
+/* ---- 1. items_style：深棕皮肤中和 ---------------------------------- */
+.items_style #userinfo {
+  background-color: var(--m-1);
+  border-bottom-color: var(--ln);
+}
+
+.items_style #announcement {
+  background-color: var(--m-3);
+  border-color: var(--ln);
+}
+
+/* 站点的 #logo 在 items_style 下用 -600px 偏移贴一张位图 */
+.items_style #logo {
+  margin-left: 0;
+  filter: none;
+  background-size: contain;
+}
+
+.items_style #menu {
+  font-family: var(--font);
+  font-size: var(--t-0);
+  background: var(--m-1);
+}
+
+.items_style #searchbars ul li input,
+.items_style input {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+}
+
+/* 以下五条必须 !important：站点自己在这里用了 !important 的棕色 */
+.items_style ul#userinfo_stats li {
+  background-color: var(--m-4) !important;
+}
+
+.items_style ul#userinfo_minor:hover li {
+  background-color: var(--m-4) !important;
+  border-bottom-color: var(--ln) !important;
+}
+
+.items_style #header ul#userinfo_minor li:hover,
+.items_style ul#userinfo_stats li:hover {
+  background-color: var(--m-5) !important;
+}
+
+.items_style #userinfo #userinfo_username #us_pop span {
+  background-color: var(--m-4);
+  border-bottom-color: var(--ln) !important;
+}
+
+.items_style #userinfo #userinfo_username #us_pop span:hover {
+  background-color: var(--m-5);
+}
+
+.items_style #site_debug,
+.items_style #server_stats,
+.items_style #toplink,
+.items_style #copyright p:nth-of-type(2) {
+  background-color: transparent !important;
+}
+
+/* ---- 2. 布局 bug（会撑破页面 / 留下大片空白）----------------------- */
+
+/* 站点把这三个页面的通知条绝对定位到 274/318px，压在正文上 */
+#shop #alerts,
+#shop.fl_shop #alerts,
+#user.inventory #alerts {
+  position: static;
+  top: auto;
+  width: auto;
+  background: none;
+}
+
+/* .items_style #content：站点把 min-height 钉成 1000px（留下大片空白）、
+   圆角归零、overflow 放开（页面横向溢出）。
+   横向裁掉、纵向保留——物品说明气泡是 position:relative; top:-152px 上浮的，
+   用 overflow:hidden 会把它切掉，clip 不会。 */
+.items_style #content {
+  min-height: 0;
+  border-radius: var(--r3);
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.trading #content {
+  min-height: 0;
+}
+
+#trading_panel .linkbox {
+  margin: 0 0 var(--s3);
+  font-size: var(--t-sm);
+  text-align: left;
+}
+
+#shop_search {
+  width: 100%;
+}
+
+.freeleech_shop_main,
+.global_buffs_shop_main {
+  width: 100%;
+  float: none;
+}
+
+/* 物品竖栏：站点钉死 390 / 650 / 800 高度，内容少时留下大片空白 */
+#equipment #items,
+#crafting_panel #items,
+#trading_panel #items {
+  height: auto;
+  background: none;
+}
+
+/* ---- 3. 物品卡片 --------------------------------------------------- */
+#shop li.item_li,
+.inventory #content li.item_li {
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+#shop li.item_li:hover,
+.inventory #content li.item_li:hover {
+  border-color: var(--ln-strong);
+}
+
+#shop #clickable:hover .item_description {
+  background-color: var(--m-0);
+  color: var(--tx-0);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+#shop input,
+#shop select,
+#shop li button,
+.inventory input,
+.inventory select,
+.inventory li button {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+/* ---- 4. 交易面板 --------------------------------------------------- */
+.trade_table .name_tag {
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  color: var(--tx-0);
+  border-radius: var(--r2);
+}
+
+#trading_panel .message_box {
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+}
+
+#trading_panel .message_reply {
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+}
+
+/* ---- 5. 消息箱 ----------------------------------------------------- */
+#inbox .colhead,
+#inbox .head {
+  background-color: var(--m-3);
+}
+
+#inbox .time {
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+}
+
+/* 未读：底色抬一级 + 左侧强调线，不用整行变色那么吵 */
+#inbox tr.unreadpm td {
+  background-color: var(--m-4);
+  box-shadow: inset 2px 0 0 var(--sage-i);
+}
+
+#inbox tr.unreadpm td a {
+  color: var(--tx-hi);
+  font-weight: 500;
+}
+
+#inbox blockquote {
+  background-color: var(--m-0);
+}
+
+/* ---- 6. 合集封面 --------------------------------------------------- */
+#collections ul.collage_images li,
+#bookmarks ul.collage_images li {
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+}
+
+#collections ul.collage_images li a,
+#bookmarks ul.collage_images li a {
+  border-radius: var(--r1);
+}
+
+/* ---- 7. Top 10 ----------------------------------------------------- */
+#top10 .group_torrent td {
+  font-size: var(--t-sm);
+}
+
+#top10 .group_torrent a {
+  font-size: var(--t-0);
+  font-weight: 500;
+}
+
+/* ---- 8. 窄屏 ------------------------------------------------------
+   必须在同一文件里、排在基础规则之后：.items_style #content 的特异度是 1-1-0，
+   写在 03-shell 的媒体查询里会被本文件更靠后的同名规则压住。
+   ------------------------------------------------------------------ */
+@media (max-width: 1099px) {
+  .items_style #content {
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  /* 装备/合成/交易是 550px 起跳的固定画布。不拆场景，改为容器内横向滚动，
+     页脚与导航仍然整屏宽，不会把整个文档撑破。 */
+  .items_style #content {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+}
+
+/* ==========================================================================
+   06 — 过渡与可访问性焦点
+   --------------------------------------------------------------------------
+   全部过渡集中在这里，便于一次性审计：
+   只过渡 color / background-color / border-color / opacity / transform，
+   都不触发回流。表格行（tr / td）**不加**过渡：一个长列表里有几百个行，
+   每次 hover 都重绘背景在滚动与快速移动鼠标时是纯损耗。
+
+   键盘焦点统一用 outline（不占布局，不会引起位移）。
+   ========================================================================== */
+
+a,
+input,
+select,
+textarea,
+button,
+.sub,
+#menu ul a {
+  transition: color 0.12s ease, background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.sub,
+#searchbars ul li ul {
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ln-strong);
+  outline-offset: 2px;
+}
+
+/* build:allow-star —— 只在用户显式声明"减少动态效果"时生效，
+   这是 WAI 推荐的标准写法，不参与常规渲染。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

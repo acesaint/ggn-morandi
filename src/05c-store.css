@@ -1,0 +1,246 @@
+/* ==========================================================================
+   05c — 商店 / 背包 / 装备 / 合成 / 交易（Palooza 五页）
+   --------------------------------------------------------------------------
+   这五页不是常规表格页面：它们是**用位图搭出来的场景**——800px 画布、
+   绝对坐标的物品格、`crafting_panel.jpg` 这类贴图，外挂在 `body.items_style`
+   这个类上，配一套深棕配色。
+
+   处理原则（保守）：
+     · 不动场景坐标、不动画布尺寸、不动物品格的绝对定位——没有真页面前重排
+       坐标必然错位，那是"破坏功能"，不是"美化"。
+     · 只做三件事：把棕色配色换到莫兰迪、修掉会撑破页面的布局 bug、
+       统一物品卡片与消息行。
+     · 保留下来的位图（owned/featured/new 角标）是有信息量的，不删。
+
+   注意：本段是按站点 CSS 写的，尚未经过真实页面验证（见 README 的待办）。
+   ========================================================================== */
+
+/* ---- 1. items_style：深棕皮肤中和 ---------------------------------- */
+.items_style #userinfo {
+  background-color: var(--m-1);
+  border-bottom-color: var(--ln);
+}
+
+.items_style #announcement {
+  background-color: var(--m-3);
+  border-color: var(--ln);
+}
+
+/* 站点的 #logo 在 items_style 下用 -600px 偏移贴一张位图 */
+.items_style #logo {
+  margin-left: 0;
+  filter: none;
+  background-size: contain;
+}
+
+.items_style #menu {
+  font-family: var(--font);
+  font-size: var(--t-0);
+  background: var(--m-1);
+}
+
+.items_style #searchbars ul li input,
+.items_style input {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+}
+
+/* 以下五条必须 !important：站点自己在这里用了 !important 的棕色 */
+.items_style ul#userinfo_stats li {
+  background-color: var(--m-4) !important;
+}
+
+.items_style ul#userinfo_minor:hover li {
+  background-color: var(--m-4) !important;
+  border-bottom-color: var(--ln) !important;
+}
+
+.items_style #header ul#userinfo_minor li:hover,
+.items_style ul#userinfo_stats li:hover {
+  background-color: var(--m-5) !important;
+}
+
+.items_style #userinfo #userinfo_username #us_pop span {
+  background-color: var(--m-4);
+  border-bottom-color: var(--ln) !important;
+}
+
+.items_style #userinfo #userinfo_username #us_pop span:hover {
+  background-color: var(--m-5);
+}
+
+.items_style #site_debug,
+.items_style #server_stats,
+.items_style #toplink,
+.items_style #copyright p:nth-of-type(2) {
+  background-color: transparent !important;
+}
+
+/* ---- 2. 布局 bug（会撑破页面 / 留下大片空白）----------------------- */
+
+/* 站点把这三个页面的通知条绝对定位到 274/318px，压在正文上 */
+#shop #alerts,
+#shop.fl_shop #alerts,
+#user.inventory #alerts {
+  position: static;
+  top: auto;
+  width: auto;
+  background: none;
+}
+
+/* .items_style #content：站点把 min-height 钉成 1000px（留下大片空白）、
+   圆角归零、overflow 放开（页面横向溢出）。
+   横向裁掉、纵向保留——物品说明气泡是 position:relative; top:-152px 上浮的，
+   用 overflow:hidden 会把它切掉，clip 不会。 */
+.items_style #content {
+  min-height: 0;
+  border-radius: var(--r3);
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.trading #content {
+  min-height: 0;
+}
+
+#trading_panel .linkbox {
+  margin: 0 0 var(--s3);
+  font-size: var(--t-sm);
+  text-align: left;
+}
+
+#shop_search {
+  width: 100%;
+}
+
+.freeleech_shop_main,
+.global_buffs_shop_main {
+  width: 100%;
+  float: none;
+}
+
+/* 物品竖栏：站点钉死 390 / 650 / 800 高度，内容少时留下大片空白 */
+#equipment #items,
+#crafting_panel #items,
+#trading_panel #items {
+  height: auto;
+  background: none;
+}
+
+/* ---- 3. 物品卡片 --------------------------------------------------- */
+#shop li.item_li,
+.inventory #content li.item_li {
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+#shop li.item_li:hover,
+.inventory #content li.item_li:hover {
+  border-color: var(--ln-strong);
+}
+
+#shop #clickable:hover .item_description {
+  background-color: var(--m-0);
+  color: var(--tx-0);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+#shop input,
+#shop select,
+#shop li button,
+.inventory input,
+.inventory select,
+.inventory li button {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+/* ---- 4. 交易面板 --------------------------------------------------- */
+.trade_table .name_tag {
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  color: var(--tx-0);
+  border-radius: var(--r2);
+}
+
+#trading_panel .message_box {
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+}
+
+#trading_panel .message_reply {
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+}
+
+/* ---- 5. 消息箱 ----------------------------------------------------- */
+#inbox .colhead,
+#inbox .head {
+  background-color: var(--m-3);
+}
+
+#inbox .time {
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+}
+
+/* 未读：底色抬一级 + 左侧强调线，不用整行变色那么吵 */
+#inbox tr.unreadpm td {
+  background-color: var(--m-4);
+  box-shadow: inset 2px 0 0 var(--sage-i);
+}
+
+#inbox tr.unreadpm td a {
+  color: var(--tx-hi);
+  font-weight: 500;
+}
+
+#inbox blockquote {
+  background-color: var(--m-0);
+}
+
+/* ---- 6. 合集封面 --------------------------------------------------- */
+#collections ul.collage_images li,
+#bookmarks ul.collage_images li {
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+}
+
+#collections ul.collage_images li a,
+#bookmarks ul.collage_images li a {
+  border-radius: var(--r1);
+}
+
+/* ---- 7. Top 10 ----------------------------------------------------- */
+#top10 .group_torrent td {
+  font-size: var(--t-sm);
+}
+
+#top10 .group_torrent a {
+  font-size: var(--t-0);
+  font-weight: 500;
+}
+
+/* ---- 8. 窄屏 ------------------------------------------------------
+   必须在同一文件里、排在基础规则之后：.items_style #content 的特异度是 1-1-0，
+   写在 03-shell 的媒体查询里会被本文件更靠后的同名规则压住。
+   ------------------------------------------------------------------ */
+@media (max-width: 1099px) {
+  .items_style #content {
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  /* 装备/合成/交易是 550px 起跳的固定画布。不拆场景，改为容器内横向滚动，
+     页脚与导航仍然整屏宽，不会把整个文档撑破。 */
+  .items_style #content {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+}

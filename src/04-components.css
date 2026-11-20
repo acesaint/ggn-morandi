@@ -1,0 +1,476 @@
+/* ==========================================================================
+   04 — 组件：盒子、表格、表单、按钮、标签、进度条
+   --------------------------------------------------------------------------
+   三条贯穿全篇的规则：
+
+   1) 分层靠 1px 线，不靠阴影。站点用 box-shadow + 渐变 + 位图堆立体感，
+      在深色低饱和里只会显得脏；这里一律压平，层级交给 --m-2/3/4 三档。
+   2) 表格的密度用"行内边距 + 细分隔线"控制，不给行加过渡。
+      一个种子列表几百行，hover 时重绘背景在滚动中就是纯损耗。
+   3) 数字列用等宽数字（tabular-nums），否则大小/做种数在列里会跳动。
+
+   悬停为什么写两组选择器：
+   站点用 #torrents .rowa td 设行背景（特异度 1-1-1）。只写 .rowa:hover td
+   （0-3-2）会被它压住，hover 不生效。所以给浏览页补一组带 #torrents 的
+   （1-2-2），其余页面用通用组——比加 !important 干净。
+   ========================================================================== */
+
+/* ---- 1. 盒子 ------------------------------------------------------- */
+.box {
+  padding: var(--s3);
+  margin: var(--s3) 0 0;
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+}
+
+.box .head {
+  margin: calc(-1 * var(--s3)) calc(-1 * var(--s3)) var(--s3);
+  padding: var(--s2) var(--s3);
+  background-color: var(--m-3);
+  border-bottom: 1px solid var(--ln);
+  border-radius: var(--r3) var(--r3) 0 0;
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.box .head a {
+  color: var(--tx-0);
+  font-size: inherit;
+}
+
+/* 站点在浏览页把盒子往上提了 27px 去咬合绝对定位的筛选面板 */
+.filter_torrents .box {
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+}
+
+.filter_torrents {
+  width: 100%;
+  margin: 0 0 var(--s3);
+}
+
+.filter_torrents .submit {
+  width: auto;
+}
+
+.pad {
+  padding: var(--s3);
+}
+
+/* 内嵌在盒子里的表格不再自带外框 */
+.box table {
+  background: none;
+}
+
+/* ---- 2. 表格 ------------------------------------------------------- */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+th,
+td {
+  padding: var(--s2) var(--s3);
+  vertical-align: middle;
+}
+
+th {
+  text-align: left;
+}
+
+.torrent_table td,
+.rowa td,
+.rowb td,
+.row_a td,
+.row_b td {
+  font-size: var(--t-sm);
+  line-height: var(--lh-tight);
+}
+
+/* 行分隔：极细一线，不是网格 */
+.torrent_table td,
+.rowa td,
+.rowb td,
+.row_a td,
+.row_b td {
+  border-bottom: 1px solid var(--ln-hair);
+}
+
+.torrent_table tr.rowa,
+.torrent_table tr.rowb,
+.torrent_table tr.row_a,
+.torrent_table tr.row_b {
+  height: auto;
+}
+
+/* 数字列 */
+td.nobr,
+.last td {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 表头 */
+.colhead,
+.colhead_dark {
+  background-color: var(--m-3);
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.colhead td,
+.colhead_dark td {
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--ln);
+  background: transparent;
+}
+
+.colhead a,
+.colhead_dark a {
+  color: var(--tx-1);
+  font-weight: 600;
+}
+
+.colhead a:hover,
+.colhead_dark a:hover {
+  color: var(--tx-hi);
+}
+
+.coltotals {
+  background-color: var(--m-3);
+  border-top: 1px solid var(--ln);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+.coltotals td {
+  padding: var(--s2) var(--s3);
+}
+
+/* ---- 3. 行悬停（不给行加过渡）------------------------------------- */
+.rowa:hover td,
+.rowb:hover td,
+.row_a:hover td,
+.row_b:hover td,
+.torrent_table tr.group:hover td,
+.torrent_table tr.group_torrent:hover td {
+  background-color: var(--m-5);
+}
+
+#torrents tr.rowa:hover td,
+#torrents tr.rowb:hover td,
+#torrents tr.row_a:hover td,
+#torrents tr.row_b:hover td,
+#torrents tr.group:hover td,
+#torrents tr.group_torrent:hover td {
+  background-color: var(--m-5);
+}
+
+/* 展开后的子行：比组行低一级，靠左侧缩进与字色区分 */
+.torrent_table tr.group_torrent td {
+  color: var(--tx-1);
+  background-color: var(--m-2);
+}
+
+.torrent_table tr.group_torrent:hover td {
+  background-color: var(--m-4);
+}
+
+/* 种子标题：站点给到 1.6em 加粗，在密集列表里太吵，压到正文级 */
+.group,
+.torrent {
+  font-size: var(--t-sm);
+}
+
+.group a,
+.torrent a,
+#torrents .group a,
+#torrents .torrent a {
+  font-size: var(--t-0);
+  font-weight: 500;
+  line-height: var(--lh-tight);
+  margin-right: 0;
+}
+
+.group a:hover,
+.torrent a:hover {
+  color: var(--link-hover);
+}
+
+/* 置顶：左侧一道强调线，不整行变色 */
+.sticky td {
+  border-top: 1px solid var(--ln-strong);
+  border-bottom: 1px solid var(--ln-strong);
+}
+
+.sticky #displayname:before {
+  display: none;
+}
+
+/* ---- 4. 标签与评分 ------------------------------------------------- */
+.tags {
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+.tags a,
+#torrents .tags a,
+.group .tags a,
+.torrent .tags a {
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.tags a:hover {
+  color: var(--tx-0);
+}
+
+.rating_container {
+  background-color: var(--m-3);
+  border: 1px solid var(--ln-hair);
+  border-radius: var(--r1);
+  color: var(--tx-2);
+}
+
+.rating_container:hover {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+}
+
+/* ---- 5. 表单控件 --------------------------------------------------- */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: var(--t-sm);
+  color: var(--tx-0);
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+select {
+  height: var(--ctl-h);
+  padding: 0 var(--s2);
+}
+
+textarea {
+  padding: var(--s2);
+  line-height: var(--lh);
+  resize: vertical;
+}
+
+input[type="text"]:hover,
+input[type="search"]:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--ln-strong);
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--sage-f);
+  background-color: var(--m-3);
+}
+
+/* 复选框与单选框：交给浏览器原生绘制，只统一强调色，不自己画 */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  margin: 0 4px 0 0;
+  accent-color: var(--sage-i);
+  vertical-align: -2px;
+}
+
+select {
+  min-width: 132px;
+  cursor: pointer;
+}
+
+/* ---- 6. 按钮 ------------------------------------------------------- */
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+button,
+.submit input {
+  height: var(--ctl-h);
+  padding: 0 var(--s4);
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  box-shadow: none;
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover,
+button:hover,
+.submit input:hover {
+  background-color: var(--m-5);
+  border-color: var(--ln-strong);
+  color: var(--tx-hi);
+}
+
+/* 主按钮：只有"提交/搜索/保存"这一级用它 */
+.submit input,
+input[type="submit"] {
+  background-color: var(--btn-primary);
+  border-color: var(--btn-primary);
+  color: var(--tx-hi);
+}
+
+.submit input:hover,
+input[type="submit"]:hover {
+  background-color: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+  color: var(--tx-hi);
+}
+
+/* 站点给 .submit input 加了 0 圆角 + 投影 */
+.submit input {
+  border-radius: var(--r2);
+  box-shadow: none;
+  height: var(--ctl-h);
+  margin: 0;
+}
+
+/* ---- 7. 表单排版 --------------------------------------------------- */
+td.label,
+.label {
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+td.label {
+  white-space: nowrap;
+}
+
+/* ---- 8. 进度条 ----------------------------------------------------- */
+#progress_bar {
+  width: 100%;
+  height: 12px;
+  padding: 0;
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  overflow: hidden;
+}
+
+.large_progress_bar {
+  width: 100%;
+  padding: 0;
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  box-shadow: none;
+}
+
+.large_progress_bar .main_bar {
+  background-color: var(--btn-primary);
+  background-image: none;
+  box-shadow: none;
+  border-radius: var(--r1);
+}
+
+/* ---- 9. 引用、代码、分隔 ------------------------------------------- */
+blockquote,
+pre {
+  padding: var(--s3) var(--s4);
+  background-color: var(--m-0);
+  border: 1px solid var(--ln-hair);
+  border-left: 2px solid var(--ln-strong);
+  border-radius: var(--r2);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+pre,
+code {
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+}
+
+code {
+  padding: 1px 5px;
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  color: var(--tx-0);
+}
+
+hr {
+  height: 1px;
+  border: 0;
+  background-color: var(--ln);
+  margin: var(--s4) 0;
+}
+
+/* ---- 10. 标题排版 ---------------------------------------------------
+   站点把页面标题写成 .thin h2:first-of-type / .header h2，并挂一条
+   var(--lightBlue) 的下划线——桥接之后会变成一条蓝线，很跳。
+   这里统一成描边色，字号走令牌，避免各页标题大小不一。
+   ------------------------------------------------------------------ */
+#content h1,
+#content h2,
+#content h3 {
+  color: var(--tx-0);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: var(--s2) 0 var(--s3);
+}
+
+#content h2 {
+  font-size: var(--t-2);
+}
+
+#content h3 {
+  font-size: var(--t-1);
+}
+
+/* #content h2 的特异度（1-0-1）压得住站点那几条 .header h2 / .thin h2:first-of-type */
+#content h2,
+#rules h3,
+#chat h3 {
+  border-bottom: 1px solid var(--ln);
+  padding-bottom: var(--s1);
+}
+
+/* 请求页把蓝色描边写成了硬编码值 + !important，只能同权重强制覆盖 */
+#requests h2 {
+  border-bottom-color: var(--ln) !important;
+  width: auto;
+  color: var(--tx-0);
+}
+
+/* 小块标题（论坛分区、资料页小节）不应比正文还大 */
+.min_padding,
+.forum_list h3 {
+  font-size: var(--t-sm);
+}

@@ -1,0 +1,396 @@
+/* ==========================================================================
+   05 — 页面级
+   --------------------------------------------------------------------------
+   只写"这一页才有"的东西。通用组件已由 04 覆盖，这里不重复。
+
+   站点这几页的历史包袱最重：浏览页的筛选面板是用绝对定位 + 负边距拼出来的
+   （`.filter_torrents{width:865px}`、`.box{margin-top:-27px; padding-top:42px}`、
+   `td{top:-25px}`），论坛用 `<td>` 做栅格并把 `text-align` 全局居中，
+   资料页把 .head 压成 21px 固定高。这些都必须在页面层显式解开。
+   ========================================================================== */
+
+/* ---- 1. 浏览 / 搜索页：筛选面板 ------------------------------------ */
+.filter_torrents {
+  width: 100%;
+  margin: 0 0 var(--s4);
+}
+
+/* 站点把它当标签画在盒子外面（position:relative; top:4px; left:15px）*/
+.filter_torrents h3 {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0 0 var(--s2);
+  padding: 0 0 var(--s1);
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 600;
+}
+
+.filter_torrents .box {
+  display: block;
+  margin: 0;
+  padding: var(--s3);
+}
+
+.filter_torrents .submit {
+  width: auto;
+  margin: 0;
+}
+
+.filter_torrents .submit span {
+  float: none;
+}
+
+.filter_torrents .submit input {
+  float: none;
+  position: static;
+  right: auto;
+}
+
+/* basic 档：站点用 top:-25px 把两列拽上来对齐，改为常规流 */
+.filter_torrents.basic .submit {
+  margin-top: 0;
+}
+
+.filter_torrents.basic .submit span {
+  position: static;
+  top: auto;
+  left: auto;
+}
+
+.filter_torrents.basic tr:nth-of-type(2) td:nth-of-type(3),
+.filter_torrents.basic tr:nth-of-type(2) td:nth-of-type(4) {
+  position: static;
+  top: auto;
+}
+
+/* 平台复选框区：原来靠彩色底块区分 */
+#torrents .filter_torrents #platcheckbox td[colspan="5"] {
+  padding: var(--s2);
+  background-color: transparent;
+  border-top: 1px solid var(--ln-hair);
+}
+
+#torrents .filter_torrents td.label {
+  background-color: transparent;
+  color: var(--tx-1);
+}
+
+/* 站内搜索建议：绝对定位拼出来的 0 宽层，改成常规流 */
+#torrents #autocomplete {
+  position: static;
+  width: 100%;
+  margin: 0;
+}
+
+#torrents ul#torrentsbrowsecomplete {
+  position: static;
+  top: auto;
+  left: auto;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#torrents #torrentsbrowsecomplete li {
+  position: static;
+  margin: 0;
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--ln-hair);
+  border-radius: 0;
+  background-color: var(--m-2);
+}
+
+#torrents #torrentsbrowsecomplete li:hover {
+  background-color: var(--m-4);
+}
+
+/* 分类标签行 */
+#taglist {
+  width: auto;
+  margin: 0 0 var(--s2);
+  font-size: var(--t-xs);
+}
+
+#taglist a,
+a.toggle_tags {
+  padding: 0 var(--s1);
+  color: var(--tx-2);
+}
+
+#taglist a:hover,
+a.toggle_tags:hover {
+  color: var(--tx-0);
+}
+
+/* ---- 2. 种子组详情页 ----------------------------------------------- */
+/* 平台页签：站点是 float:left 的 td，改成 flex 胶囊 */
+#grouplinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+  width: 100%;
+  margin: var(--s2) 0 var(--s3);
+  border: 0;
+  background: none;
+}
+
+#grouplinks tbody,
+#grouplinks tr {
+  display: contents;
+}
+
+#grouplinks td {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  float: none;
+  padding: var(--s1) var(--s3);
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#grouplinks td:hover {
+  background-color: var(--m-4);
+  border-color: var(--ln-strong);
+  color: var(--tx-0);
+}
+
+#grouplinks td a {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 侧栏：站点在详情页把它放在左侧、250px、且把 .box 也钉死 250px */
+#torrents .sidebar {
+  width: 280px;
+}
+
+#torrents .sidebar .box {
+  width: auto;
+}
+
+#torrents .sidebar .head {
+  margin-bottom: var(--s2);
+}
+
+/* 封面：保留 2:3 海报比例，hover 放大收进圆角里 */
+.box_albumart img {
+  border-radius: var(--r2);
+  transition: transform 0.18s ease;
+}
+
+.box_albumart:hover img {
+  transform: scale(1.06);
+}
+
+/* 相似游戏网格 */
+.similar ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.similar li.similar_group {
+  width: calc(20% - var(--s2));
+  min-width: 112px;
+  margin: 0;
+}
+
+.similar .similar_group > a img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--r1);
+}
+
+.similar .similar_votes {
+  width: 100%;
+  padding: var(--s1) 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 0 0 var(--r1) var(--r1);
+  font-size: var(--t-micro);
+}
+
+/* ---- 3. 论坛 ------------------------------------------------------- */
+#forums .forum_post .body {
+  width: 100%;
+  margin: 0;
+  padding: var(--s3) var(--s4);
+}
+
+#forums td.body {
+  padding: var(--s3) var(--s4);
+}
+
+/* 站点在头像单元格上挂了 10px 投影 */
+td.avatar {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+#forums td.avatar img {
+  border-radius: var(--r2);
+  margin-top: 0;
+}
+
+.forumstat {
+  padding: var(--s1) var(--s2);
+  background-color: var(--m-2);
+  border-radius: var(--r1);
+  color: var(--tx-2);
+  font-size: var(--t-micro);
+}
+
+.forumstat:hover {
+  color: var(--tx-0);
+}
+
+/* 点赞行：站点用 2px 黑线分隔 */
+tr.likes {
+  border-top: 1px solid var(--ln);
+}
+
+tr.likes td {
+  background-color: var(--m-2);
+  color: var(--tx-2);
+  padding: var(--s1) var(--s3);
+}
+
+/* 论坛列表里的小标题 */
+#forums .forum_list h3 {
+  margin: 0 0 var(--s2);
+  padding: 0 0 var(--s1);
+  border-bottom: 1px solid var(--ln);
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+}
+
+/* 未读/已读气球图标：保留站点位图，只统一尺寸与对齐 */
+#forums #content .thin td.read,
+#forums #content .thin td.unread,
+#forums #content .thin td.read_sticky,
+#forums #content .thin td.unread_sticky,
+#forums #content .thin td.read_locked,
+#forums #content .thin td.unread_locked,
+#forums #content .thin td.read_locked_sticky,
+#forums #content .thin td.unread_locked_sticky {
+  background-color: transparent;
+  background-position: center;
+}
+
+/* 帖子里的图片与视频：去掉 drop-shadow，改细边框 */
+#forums .forum_post td.body img,
+#forums .forum_post td.body video,
+#forums .forum_post td.body iframe {
+  filter: none;
+  border-radius: var(--r1);
+  box-shadow: none;
+}
+
+/* ---- 4. 个人资料 --------------------------------------------------- */
+/* 站点把 .head 压成 21px 固定高 + 98% 宽 */
+#user .head {
+  display: block;
+  height: auto;
+  width: auto;
+}
+
+.profile .box_main_info {
+  display: block;
+  padding: var(--s3);
+  background: none;
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+}
+
+.profile .box_image_avatar img {
+  filter: none;
+  border-radius: var(--r2);
+}
+
+.profile .box_stats {
+  background: none;
+}
+
+.profile .box_stats ul {
+  margin: 0;
+}
+
+.profile .box_stats #hnrs {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.profile .box_stats .online {
+  color: var(--ok);
+}
+
+.profile .box_stats .offline {
+  color: var(--tx-3);
+  opacity: 1;
+}
+
+.profile .box_stats .status {
+  font-size: var(--t-1);
+}
+
+/* ---- 5. 合集 / 封面网格 -------------------------------------------- */
+ul.collage_images li,
+#collage_table td {
+  background-color: var(--m-0);
+  border-radius: var(--r1);
+  overflow: hidden;
+}
+
+ul.collage_images li img {
+  border-radius: var(--r1);
+}
+
+/* ---- 6. 面包屑与分页 ----------------------------------------------- */
+div.breadcrumbs {
+  padding: 0 0 var(--s2);
+  text-align: left;
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+}
+
+.linkbox {
+  margin: var(--s3) 0;
+  font-size: var(--t-xs);
+  line-height: 1.8;
+}
+
+.linkbox a {
+  padding: 2px var(--s2);
+  border-radius: var(--r1);
+}
+
+.linkbox a:hover {
+  background-color: var(--m-4);
+  text-decoration: none;
+}
+
+.pager strong {
+  color: var(--tx-0);
+  font-weight: 600;
+}
+
+/* 排序用的表头链接不换行，避免列宽抖动 */
+.colhead a {
+  white-space: nowrap;
+}

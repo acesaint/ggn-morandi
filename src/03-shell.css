@@ -1,0 +1,718 @@
+/* ==========================================================================
+   03 — 骨架
+   --------------------------------------------------------------------------
+   头部从 274px 绝对定位画布改成三行网格：
+     row1  [用户条 ....................... 搜索]
+     row2  [             logo 92px            ]
+     row3  [            主导航 36px           ]
+   用 grid 而不是 flex，是因为这些子元素在 DOM 里的顺序不一定就是我们想要的
+   顺序；显式 grid-row 可以只在 CSS 里排序，不必改动 HTML。
+
+   #header > * 只匹配直接子元素（约 5–8 个），不是后代通配，代价可忽略：
+   它的作用是让所有"未知"子元素默认整行，避免它们挤进两列网格。
+   ========================================================================== */
+
+#header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  width: 100%;
+  background-color: var(--m-1);
+  border-bottom: 1px solid var(--ln);
+}
+
+#header > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+/* ---- 1. 用户条 ----------------------------------------------------- */
+#userinfo {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  height: var(--bar-h);
+  padding: 0 var(--gutter);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+#userinfo a {
+  color: var(--tx-1);
+  text-decoration: none;
+}
+
+#userinfo a:hover {
+  color: var(--tx-hi);
+}
+
+#userinfo_username {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  list-style: none;
+  font-size: var(--t-sm);
+}
+
+#userinfo_username li {
+  position: relative;
+  float: none;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0;
+  list-style: none;
+}
+
+#userinfo_username .brackets {
+  margin: 0;
+  padding: 0 var(--s1);
+  font-size: var(--t-xs);
+  color: var(--tx-2);
+  line-height: 1;
+}
+
+#userinfo_username .username_badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 用户名弹层 #us_pop
+   显隐由站点 JS 控制（onmouseover="mcancelclosetime()"），CSS 不去抢：
+   只负责定位与外观。这里强行 visibility/opacity 会把菜单弄坏——这是真实
+   DOM 核对时才发现的。 */
+.sub {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--z-drop);
+  min-width: 184px;
+  padding: var(--s1);
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+.sub span {
+  display: block;
+  width: auto;
+  border: 0;
+  background: none;
+  font-size: var(--t-sm);
+}
+
+.sub span a {
+  display: block;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r1);
+  color: var(--tx-1);
+  white-space: nowrap;
+}
+
+.sub span a:hover {
+  background-color: var(--m-5);
+  color: var(--tx-hi);
+  text-decoration: none;
+}
+
+#userinfo_username {
+  position: relative;
+}
+
+/* ---- 2. 用户条里的两个图标下拉 -------------------------------------
+   站点机制：ul 本身是 32px 的图标块，li 默认 display:none，:hover 时展开。
+   这里保持"表在流内、项在流外"：ul 不改变尺寸（不推挤兄弟元素），
+   li 绝对定位到 ul 下方，并用 translateY 逐项错开。
+
+   为什么用 translateY 而不是 top：站点在 hover 时写了 top:28px
+   （#userinfo_stats:hover li，特异度 1-2-1），会盖掉我们较低特异度的
+   top 值；translateY 它没碰过，可以稳定错开。
+   ------------------------------------------------------------------ */
+#userinfo_stats {
+  margin-left: auto;   /* 真实 DOM 里统计/私信两组位于用户条右端 */
+}
+
+#userinfo_minor,
+#userinfo_stats {
+  flex: 0 0 32px;      /* 不让 flex 把图标按钮压成 16px——真实页面 1100 档会压 */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-radius: var(--r2);
+  z-index: var(--z-drop);
+  cursor: pointer;
+}
+
+#userinfo_minor::before,
+#userinfo_stats::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background-color: var(--tx-1);
+  -webkit-mask: var(--i-menu) center / contain no-repeat;
+  mask: var(--i-menu) center / contain no-repeat;
+}
+
+#userinfo_stats::before {
+  -webkit-mask-image: var(--i-stats);
+  mask-image: var(--i-stats);
+}
+
+#userinfo_minor:hover,
+#userinfo_stats:hover {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-color: var(--m-4);
+}
+
+#userinfo_minor:hover::before,
+#userinfo_stats:hover::before {
+  background-color: var(--tx-hi);
+}
+
+/* 站点 hover 时把 ul 撑高、补 padding-top —— 在这里归零，尺寸恒定 */
+#userinfo_minor:hover {
+  overflow: visible;
+  background-position: 0 0;
+  background-image: none;
+  padding-top: 0;
+}
+
+#userinfo_minor li,
+#userinfo_stats li {
+  position: absolute;
+  top: 100%;
+  right: 0;   /* 两个入口都在用户条右端，面板向左展开才不会顶出视口 */
+  width: 208px;
+  margin: 0 !important; /* 站点自带 margin:0!important，必须同权重覆盖 */
+  border: 1px solid var(--ln);
+  border-bottom: 0;
+  background-color: var(--m-4);
+  border-radius: 0;
+}
+
+#userinfo_minor li:last-child,
+#userinfo_stats li:last-child {
+  border-bottom: 1px solid var(--ln);
+  border-radius: 0 0 var(--r2) var(--r2);
+}
+
+#userinfo_minor li a,
+#userinfo_stats li a {
+  display: block;
+  padding: var(--s2) var(--s3);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+#userinfo_minor li:hover,
+#userinfo_stats li:hover {
+  background-color: var(--m-5);
+  border-color: var(--ln-strong);
+}
+
+#userinfo_minor li a:hover,
+#userinfo_stats li a:hover {
+  color: var(--tx-hi);
+  text-decoration: none;
+}
+
+/* 站点 hover 时写死 top:28px，同特异度后来居上，把它压回 100% */
+#userinfo_stats:hover li {
+  top: 100%;
+}
+
+/* 逐项错开：行高 32px（29px 内容 + 1px 边线 + 2px 余量） */
+#userinfo_minor li:nth-of-type(2), #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
+#userinfo_minor li:nth-of-type(3), #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
+#userinfo_minor li:nth-of-type(4), #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
+#userinfo_minor li:nth-of-type(5), #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
+#userinfo_minor li:nth-of-type(6), #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
+#userinfo_minor li:nth-of-type(7), #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
+#userinfo_minor li:nth-of-type(8), #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
+#userinfo_minor li:nth-of-type(9), #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
+#userinfo_minor li:nth-of-type(10), #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
+#userinfo_minor li:nth-of-type(11), #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
+#userinfo_minor li:nth-of-type(12), #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
+#userinfo_minor li:nth-of-type(13), #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
+#userinfo_minor li:nth-of-type(14), #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
+
+/* 统计项：保留站点自带的小图标（已下载，0 额外成本），只调间距与字色 */
+#userinfo_stats li {
+  padding: var(--s2) var(--s3) var(--s2) 24px;
+  background-repeat: no-repeat;
+  background-position: 6px 50%;
+  font-size: var(--t-xs);
+}
+
+.notification_bubble {
+  position: absolute;
+  top: -2px;
+  left: auto;
+  right: -2px;
+  margin: 0;
+  padding: 0 4px;
+  max-width: none;
+  background-color: var(--warn);
+  color: var(--m-0);
+  border-radius: var(--r1);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  box-shadow: none;
+  line-height: 14px;
+}
+
+/* 捐赠入口：站点用 mario 字体 + 文字阴影，改成普通文字 */
+.donateico {
+  margin-left: 0;
+  font-size: var(--t-xs);
+}
+
+.donateico a {
+  color: var(--sage-i);
+  font-family: var(--font);
+  font-weight: 500;
+  font-size: var(--t-xs);
+  text-shadow: none;
+}
+
+.donateico a:hover {
+  color: var(--tx-hi);
+}
+
+.clan_trophy img {
+  height: auto;
+  max-height: 56px;
+}
+
+/* ---- 3. Logo 带 ---------------------------------------------------- */
+#logo {
+  grid-row: 2;
+  background-color: var(--m-1);
+}
+
+/* ---- 4. 搜索 ------------------------------------------------------- */
+#searchbars {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s2);
+  padding-right: var(--gutter);
+}
+
+#searchbars ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#searchbars ul li {
+  position: relative;
+  float: none;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+}
+
+#searchbars form {
+  margin: 0;
+}
+
+#searchbars input[type="text"],
+#searchbars input[type="search"] {
+  width: 112px;
+  height: 26px;
+  padding: 0 var(--s2);
+  text-align: left;
+  color: var(--tx-0);
+  background-color: var(--m-2);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  font-size: var(--t-sm);
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+
+#searchbars input[type="text"]::placeholder {
+  color: var(--tx-2);
+}
+
+#searchbars input[type="text"]:focus,
+#searchbars input[type="search"]:focus {
+  outline: none;
+  background-color: var(--m-4);
+  border-color: var(--ln-strong);
+}
+
+/* 搜索自动补全：站点把它做成了 0 宽 + 负 left，这里还原成正常浮层 */
+#searchbars ul li ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--z-drop);
+  width: 260px;
+  margin: var(--s1) 0 0;
+  padding: var(--s1);
+  height: auto;
+  text-align: left;
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+#searchbars ul.autocomplete_list li {
+  float: none;
+  width: auto;
+  margin: 0;
+  padding: var(--s2) var(--s3);
+  border: 0;
+  border-radius: var(--r1);
+  background: none;
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  text-align: left;
+}
+
+#searchbars ul.autocomplete_list li:hover,
+#searchbars ul.autocomplete_list li.highlight {
+  background-color: var(--m-5);
+  color: var(--tx-hi);
+}
+
+/* ---- 5. 主导航 ----------------------------------------------------- */
+#menu {
+  grid-row: 3;
+  background-color: var(--m-1);
+  border-top: 1px solid var(--ln);
+}
+
+#menu ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  height: var(--nav-h);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  max-width: var(--shell);
+  list-style: none;
+}
+
+#menu ul li {
+  float: none;
+  display: flex;
+  margin: 0;
+}
+
+#menu ul a {
+  display: block;
+  padding: 0 var(--s3);
+  margin: 0;
+  line-height: var(--nav-h);
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: var(--r2);
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+
+#menu ul li.active a {
+  color: var(--tx-hi);
+  background-color: var(--m-4);
+  box-shadow: inset 0 -2px 0 var(--sage-i);
+}
+
+#menu ul li a:hover {
+  color: var(--tx-hi);
+  background-color: var(--m-4);
+  text-decoration: none;
+}
+
+/* ---- 6. 公告与提示条 ----------------------------------------------- */
+#alerts {
+  width: min(var(--shell), 100%);
+  margin: var(--s2) auto 0;
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+.alertbar {
+  color: var(--tx-1);
+  font-size: var(--t-sm);
+}
+
+#announcement {
+  width: min(var(--shell), 100%);
+  margin: var(--s2) auto 0;
+  padding: var(--s2) var(--s4);
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+  color: var(--tx-0);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-align: center;
+  box-shadow: none;
+}
+
+.error_message {
+  width: auto;
+  margin: var(--s2) 0;
+  padding: var(--s2) var(--s4);
+  background-color: rgba(203, 150, 152, 0.12);
+  border: 1px solid rgba(203, 150, 152, 0.35);
+  border-radius: var(--r2);
+  color: var(--bad);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.save_message {
+  width: auto;
+  margin: var(--s2) 0;
+  padding: var(--s2) var(--s4);
+  background-color: rgba(155, 182, 154, 0.1);
+  border: 1px solid rgba(155, 182, 154, 0.3);
+  border-radius: var(--r2);
+  color: var(--ok);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  box-shadow: none;
+}
+
+/* ---- 7. 全局 buff -------------------------------------------------- */
+.global_buffs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s2);
+  margin: var(--s2) 0 0;
+  padding: 0 var(--gutter);
+  width: 100%;
+  border: 0;
+  box-shadow: none;
+}
+
+.global_buffs a {
+  color: var(--tx-1);
+  font-size: var(--t-xs);
+  text-decoration: none;
+}
+
+.global_buffs a:hover {
+  color: var(--tx-hi);
+}
+
+/* ---- 8. 内容与两栏 -------------------------------------------------
+   站点是 float 两栏（.main_column / .sidebar），不改成 grid：
+   父元素结构未经真实 DOM 确认，改 grid 会让未知的兄弟节点乱序。
+   这里只把宽度接到令牌上，并让容器包含浮动（flow-root）。
+   ------------------------------------------------------------------ */
+#content {
+  display: flow-root;
+  margin: var(--s4) auto var(--s6);
+}
+
+.main_column {
+  float: left;
+  width: calc(100% - var(--side) - var(--s5));
+}
+
+.sidebar {
+  float: right;
+  width: var(--side);
+}
+
+.sidebar .box {
+  margin-top: 0;
+  margin-bottom: var(--s3);
+}
+
+.sidebar img {
+  max-width: 100%;
+}
+
+/* ---- 9. 页脚 ------------------------------------------------------- */
+#footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2) var(--s4);
+  padding: var(--s3) var(--gutter) var(--s4);
+  font-size: var(--t-xs);
+  color: var(--tx-2);
+  line-height: 1.5;
+}
+
+#footer a {
+  color: var(--tx-2);
+}
+
+#footer a:hover {
+  color: var(--tx-0);
+}
+
+#server_stats,
+#toplink,
+#copyright p:nth-of-type(2) {
+  float: none;
+  width: auto;
+  height: auto;
+  padding: 0;
+  background: none;
+}
+
+#toplink {
+  text-align: right;
+}
+
+#site_debug {
+  padding: var(--s2) 0;
+  color: var(--tx-3);
+  font-size: var(--t-micro);
+}
+
+/* ---- 10. 断点 ------------------------------------------------------
+   与站点自身的断点对齐（1100 / 800），避免和它的移动皮肤互相打架。
+   ------------------------------------------------------------------ */
+@media (max-width: 1399px) {
+  :root {
+    --shell: 1160px;
+  }
+}
+
+@media (max-width: 1099px) {
+  /* 与站点同断点：这一档仍是两列（用户条 + 搜索同一行），只压缩 logo */
+  :root {
+    --shell: 100%;
+    --logo-h: 76px;
+  }
+
+  #content {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  /* 单列堆叠：logo → 用户条 → 搜索 → 导航 */
+  :root {
+    --logo-h: 64px;
+    --bar-h: 34px;
+    --nav-h: 34px;
+  }
+
+  #header > * {
+    grid-column: 1 / -1;
+  }
+
+  #logo {
+    grid-row: 1;
+  }
+
+  #userinfo {
+    grid-row: 2;
+    height: var(--bar-h);
+  }
+
+  #searchbars {
+    grid-row: 3;
+    justify-content: flex-start;
+    padding: 0 var(--gutter) var(--s2);
+  }
+
+  #menu {
+    grid-row: 4;
+  }
+
+  #menu ul {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  #menu ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  #searchbars ul {
+    flex-wrap: wrap;
+  }
+
+  #searchbars input[type="text"],
+  #searchbars input[type="search"] {
+    width: 108px;
+  }
+
+  #content {
+    padding: var(--s3);
+  }
+
+
+  /* 真实 DOM：首页两栏是 .sidebar 与 .main_column_bg（.main_column 嵌在里面），
+     且 .sidebar 在 DOM 里排在前面。单列时必须把正文提到前面，否则先看到侧栏。 */
+  #content .thin:has(> .sidebar) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #content .thin:has(> .sidebar) > .main_column_bg {
+    order: 1;
+  }
+
+  #content .thin:has(> .sidebar) > .sidebar {
+    order: 2;
+  }
+
+  .main_column_bg,
+  .main_column,
+  .sidebar {
+    float: none;
+    width: 100%;
+  }
+
+  .sidebar {
+    margin-top: var(--s4);
+  }
+
+  /* 窄屏用户条：用户名 + 编辑/登出/捐赠 + 两组图标，500px 装不下一行，允许折行 */
+  #userinfo {
+    height: auto;
+    min-height: var(--bar-h);
+    flex-wrap: wrap;
+    row-gap: 2px;
+    padding: 4px var(--gutter);
+  }
+
+  .donateico {
+    display: none; /* 移动端让位给搜索框；捐赠入口在页脚仍有链接 */
+  }
+}

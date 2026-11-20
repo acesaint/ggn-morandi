@@ -1,0 +1,44 @@
+/* ==========================================================================
+   06 — 过渡与可访问性焦点
+   --------------------------------------------------------------------------
+   全部过渡集中在这里，便于一次性审计：
+   只过渡 color / background-color / border-color / opacity / transform，
+   都不触发回流。表格行（tr / td）**不加**过渡：一个长列表里有几百个行，
+   每次 hover 都重绘背景在滚动与快速移动鼠标时是纯损耗。
+
+   键盘焦点统一用 outline（不占布局，不会引起位移）。
+   ========================================================================== */
+
+a,
+input,
+select,
+textarea,
+button,
+.sub,
+#menu ul a {
+  transition: color 0.12s ease, background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.sub,
+#searchbars ul li ul {
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ln-strong);
+  outline-offset: 2px;
+}
+
+/* build:allow-star —— 只在用户显式声明"减少动态效果"时生效，
+   这是 WAI 推荐的标准写法，不参与常规渲染。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
