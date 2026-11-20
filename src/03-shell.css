@@ -461,9 +461,19 @@
   text-align: center;
 }
 
+/* staff 工具条（Tools / 清缓存）：站点用 .blend 把文字做成透明，
+   实际只占一条细线。压到 14px 高，别再吃一整行。 */
+#alerts {
+  margin: 0;
+  padding: 1px var(--gutter);
+  font-size: var(--t-micro);
+  line-height: 1.4;
+  text-align: right;
+}
+
 .alertbar {
   color: var(--tx-1);
-  font-size: var(--t-sm);
+  font-size: var(--t-micro);
 }
 
 #announcement {
@@ -505,27 +515,80 @@
   box-shadow: none;
 }
 
-/* ---- 7. 全局 buff -------------------------------------------------- */
+/* ---- 7. 全局 buff --------------------------------------------------
+   真实页面实测：单个 buff 被站点样式压成 84px 宽，文字在里面折行，
+   一行吃掉 81px 高度（头部总高 280）。这里改成不折行的胶囊。
+   ------------------------------------------------------------------ */
 .global_buffs {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--s2);
-  margin: var(--s2) 0 0;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: var(--s1);
+  margin: var(--s1) 0 0;
   padding: 0 var(--gutter);
   width: 100%;
+  overflow-x: auto;
   border: 0;
+  box-shadow: none;
+  scrollbar-width: none;
+}
+
+.global_buffs::-webkit-scrollbar {
+  display: none;
+}
+
+.global_buffs > div,
+.global_buffs .individual_buff {
+  flex: 0 0 auto;
+  width: auto;
+  float: none;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  background: none;
   box-shadow: none;
 }
 
 .global_buffs a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: 1px var(--s2);
+  white-space: nowrap;
   color: var(--tx-1);
-  font-size: var(--t-xs);
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  border-radius: 999px;
+  font-size: var(--t-micro);
+  line-height: 18px;
   text-decoration: none;
 }
 
 .global_buffs a:hover {
   color: var(--tx-hi);
+  border-color: var(--ln-strong);
+}
+
+.global_buffs .fa {
+  font-size: 11px;
+  line-height: 1;
+  font-style: normal;
+}
+
+/* 站点把 buff 做成"图标 + 两行文字"（div.buff_text 里带 <br>）。
+   胶囊里改成一行：标签与数值用间距分开，去掉换行。 */
+.global_buffs .buff_text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s1);
+}
+
+.global_buffs .buff_text br {
+  display: none;
+}
+
+.global_buffs .buff_label {
+  color: var(--tx-2);
 }
 
 /* ---- 8. 内容与两栏 -------------------------------------------------

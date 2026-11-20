@@ -394,3 +394,59 @@ div.breadcrumbs {
 .colhead a {
   white-space: nowrap;
 }
+
+/* ---- 7. 站点里剩下的硬编码颜色 -------------------------------------
+   这些是带 !important 或高特异度写死的旧皮肤颜色，变量桥接覆盖不到。
+   ------------------------------------------------------------------ */
+
+/* 平台复选框块（浏览页 / 资料编辑页都有）：原来是一整块 #2b4e66 的蓝 */
+#platcheckbox td[colspan="5"] {
+  background-color: var(--m-3);
+  height: auto;
+  padding: var(--s2) var(--s3);
+}
+
+/* 请求页的捐赠栏：左边一条 #c6e6f6 的亮蓝线 */
+#requests #requests_donate {
+  border-left-color: var(--ln);
+}
+
+/* 种子状态色：站点写死 #d9e473 / #69c077 / #bf6a6a 且带 !important，
+   在列表里是刺眼的亮绿亮红。换成低饱和状态色，语义不变。 */
+#color_seeding,
+#color_seeding .torrent_info_tags,
+#color_seeding a {
+  color: var(--state-seeding) !important;
+}
+
+#color_leeching,
+#color_leeching .torrent_info_tags,
+#color_leeching a {
+  color: var(--state-leeching) !important;
+}
+
+#color_snatched,
+#color_snatched .torrent_info_tags,
+#color_snatched a {
+  color: var(--state-snatched) !important;
+}
+
+#color_downloaded,
+#color_downloaded .torrent_info_tags,
+#color_downloaded a {
+  color: var(--state-uploaded) !important;
+}
+
+/* 用户日志里的绿/红标记 */
+td .log_green {
+  color: var(--ok);
+}
+
+td .log_red {
+  color: var(--bad);
+}
+
+/* 资料页 H&R 的 good 标记 */
+.profile .box_stats #hnrs a.good {
+  color: var(--ok);
+}
