@@ -631,3 +631,45 @@ th {
   color: var(--tx-2);
   font-size: var(--t-xs);
 }
+
+/* ---- 17. 用户菜单弹层：强制悬停展开 --------------------------------
+   站点用 JS（mcancelclosetime / mclosetime）控制 #us_pop 的显隐，
+   实测会一直挂在页面上，把标题和正文压住。CSS 用 !important 接管：
+   默认隐藏，悬停用户名或聚焦时展开。站点 JS 仍可正常工作，只是不再
+   决定"一直显示"这件事。
+   ------------------------------------------------------------------ */
+#header .sub,
+#us_pop {
+  visibility: hidden !important;
+  opacity: 0;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+#header #userinfo_username:hover #us_pop,
+#header #userinfo_username:focus-within #us_pop,
+#header #us_pop:hover,
+#header #userinfo_username:hover .sub {
+  visibility: visible !important;
+  opacity: 1;
+}
+
+/* ---- 18. 下拉框 ---------------------------------------------------
+   ambrose 的 select 是白底黑字，在深色页面里像一块补丁。
+   ------------------------------------------------------------------ */
+select,
+#content select {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+select option,
+select optgroup {
+  background-color: var(--m-4);
+  color: var(--tx-0);
+}
+
+select:hover {
+  border-color: var(--ln-strong);
+}

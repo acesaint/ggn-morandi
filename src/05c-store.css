@@ -119,13 +119,9 @@
   float: none;
 }
 
-/* 物品竖栏：站点钉死 390 / 650 / 800 高度，内容少时留下大片空白 */
-#equipment #items,
-#crafting_panel #items,
-#trading_panel #items {
-  height: auto;
-  background: none;
-}
+/* 物品竖栏：这里是 550×800 的手绘面板 + 绝对定位物品格。
+   之前把 height 改成 auto，容器塌成 200×6px、物品全散——已撤回。
+   这几页不做结构改造，只换颜色（见下方第 3、4 节）。 */
 
 /* ---- 3. 物品卡片 --------------------------------------------------- */
 #shop li.item_li,
