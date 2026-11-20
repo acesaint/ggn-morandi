@@ -53,6 +53,17 @@ https://cdn.jsdelivr.net/gh/acesaint/ggn-morandi@main/ggn-morandi.css
 
 ---
 
+## 最重要的一条前提
+
+站点启用 **External CSS** 时，**不加载自己的皮肤样式表**。这意味着很多页面
+（商店 / 背包 / 装备 / 合成 / 好友）在站点侧几乎是"素 HTML"：
+列表带项目符号、物品图按原图尺寸铺满、`#logo` 没有背景图、`#friends` 的表格
+列纵向居中错位。所以本主题必须**自己给出这些页面的版式**，见 `src/05d-pages2.css`。
+
+平台图标（144 个）与商店链接图标来自站点自己的 `caticons.css` / `webLinks.css`，
+已内联进 `src/02c-icons.css`（把 `url(images/...)` 改成绝对地址），
+零额外请求，也不会因 @import 顺序失效。
+
 ## 一件重要的事：站点跑的是 ambrose
 
 GazelleGames 的默认皮肤是 **ambrose**（`static/styles/ambrose/style.css`，单文件 141 KB），

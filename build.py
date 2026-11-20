@@ -118,6 +118,12 @@ def main():
         hard.append(f"!important 超预算：{total_imp} > {IMPORTANT_BUDGET}")
 
     # --- 3. 禁用属性 ---
+    # 白名单：站点自带的图标样式表（caticons / webLinks），标记 build:allow-import。
+    # 这两个文件与皮肤无关、体积小、强缓存，是蓝色主题项目的成熟做法。
+    allow_import = re.compile(
+        r'^@import url\("https://gazellegames\.net/static/styles/game_room/'
+        r'(?:caticons|webLinks)\.css"\);\s*/\* build:allow-import \*/$', re.M)
+    body = allow_import.sub("", body)
     clean = strip_comments(body)
     for pattern, why in FORBIDDEN:
         hits = [i + 1 for i, line in enumerate(clean.splitlines())

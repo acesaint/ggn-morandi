@@ -1,0 +1,203 @@
+/* ==========================================================================
+   02c — 站点平台图标 / 商店链接图标（自动生成，勿手改）
+   --------------------------------------------------------------------------
+   抄自站点自己的 caticons.css（144 个平台图标）与 webLinks.css，
+   只把 url('images/...') 改写成绝对地址，其余原样。
+
+   为什么不用 @import：@import 必须排在样式表最前面，而我们的成品由多段
+   拼接、首段是 UserStyle 元信息，插进去会被规则前置而失效（实测被直接丢弃）。
+   内联只多 20 KB，换来零额外请求 + 顺序无关。
+   ========================================================================== */
+
+/* ---- 平台 / 主机图标（caticons.css）------------------------------------------ */
+.\33 do				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/3do.png')}
+.amigacd32			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/amigacd32.png')}
+.amstradcpc			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/amstradcpc.png')}
+.android			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/android.png')}
+.acornarchimedes			     {height:28px; width:24px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/archimedes.png')}
+.applebandaipippin	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/applebondaipippen.png')}
+.appleii            {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/appleii.png')}
+.apps				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/apps.png')}
+.atari2600			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/atari2600.png')}
+.atari5200			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/atari5200.png')}
+.atari7800			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/atari7800.png')}
+.atari8-bit			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/atarigenericlogo.png')}
+.atarijaguar		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/atarijaguar.png')}
+.atarilynx			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/atarilynx.png')}
+.atarist			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/atarist.png')}
+.bbcmicro			     {height:21px; width:17px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/bbcmicro_red.png')}
+.ballyastrocade			{height:23px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/ballyastrocade.png')}
+.bandaiwonderswan	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/wonderswan.png')}
+.bandaiwonderswancolor	{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/bandaiwonderswancolor.png')}
+.boardgame			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/boardgame.png')}
+.cardgame			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/cardgame.png')}
+.casioloopy			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/loopy.png')}
+.casiopv-1000		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/casiopv1000.png')}
+.colecovision		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/colecovision.png')}
+.commodore64		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/commodore64.png')}
+.commodoreamiga		{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/amiga.png')}
+.commodoreplus-4	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/commodore64-4.png')}
+.commodorevic-20	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/commodorevic20.png')}
+.creativision		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/creativision.png')}
+.dos				     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/dos.png')}
+.dragon3264			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/dragon32.png')}
+.dreamcast			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/dreamcast.png')}
+.dsiware			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/dsiware.png')}
+.dvd				     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/dvd.png')}
+.ebook				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/ebook.png')}
+.emersonarcadia2001	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/arcadia2001.png')}
+.entexadventurevision	{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/entex.png')}
+.epochsupercasettevision	{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/epoch.png')}
+.ex-bgcollections	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/ex-bgcollections.png')}
+.ex-bgfullsets		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/ex-bgfullsets.png')}
+.ex-bggoldens		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/ex-bggoldens.png')}
+.fairchildchannelf	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/fairchildchannelf.png')}
+.funtechsuperacan	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/funtech.png')}
+.fujitsufmtowns	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/fujitsufmtowns.png')}
+.fujitsufm-7	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/fujitsufm7_alt.png')}
+.game\.com               {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gamecom.png')}
+.gameboy			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gameboy.png')}
+.gameboyadvance		{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gameboyadvance.png')}
+.gameboycolor		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gameboycolor.png')}
+.gamecom			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gamecom.png')}
+.gamegear			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gamegear.png')}
+.gameparkgp32		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gp32.png')}
+.generalcomputervectrex	{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/generalcomputervectrex.png')}
+.gizmondo                {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gizmondo.png')}
+.hartungamemaster	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/gamemaster.png')}
+.intellivision		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/intellivision.png')}
+.interactivedvd		{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/dvd.png')}
+.ios				     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/ios.png')}
+.linux				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/linux.png')}
+.mac				     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/mac.png')}
+.magnavox-phillipsodyssey{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/magnavoxodyssey.png')}
+.mastersystem		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/mastersystem.png')}
+.mattelintellivision     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/intellivision.png')}
+.megadrive			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/megadrive.png')}
+.memotechmtx		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/memotechmtx.png')}
+.milesgordonsamcoupe     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/samcoupe.png')}
+.miniaturewargames	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/miniwargames.png')}
+.msx				     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/msx.png')}
+.msx2				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/msx2.png')}
+.music				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/music.png')}
+.necpc-88			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/necpc-88.png')}
+.necpc-98			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/necpc-98.png')}
+.necpc-fx			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/necpcfx.png')}
+.necsupergrafx		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/supergfx.png')}
+.necturbografx-16	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/turbografx16.png')}
+.nes				     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/nes.png')}
+.newnintendo3ds		{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/new3ds.png')}
+.newnintendo3dsvc	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/nintendo3dsVC.png')}
+.nintendo3ds		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/nintendo3ds.png')}
+.nintendo3dsvc		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/nintendo3dsVC.png')}
+.nintendo64			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/nintendo64.png')}
+.nintendods			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/nintendods.png')}
+.nintendogamecube	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/nintendogamecube.png')}
+.nokian-gage		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/n-gage.png')}
+.oculusquest		{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/oculusquest.png')}
+.ouya                    {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/ouya.png')}
+.penandpaperrpg 	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/penandpaperRPGS.png')}
+.philipsvideopac	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/philipsvideopac.png')}
+.philipsvideopac\+	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/philipsvideopac.png')}
+.phonepda			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/phonepda.png')}
+.pico				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/pico.png')}
+.playstation1		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstation.png')}
+.playstation2		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstation2.png')}
+.playstation3		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstation3-3.png')}
+.playstation4		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstation4.png')}
+.playstation5		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstation5.png')}
+.playstationportable     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstationportable.png')}
+.playstationvita	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstationvita.png')}
+.pokemonmini		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/pokemonmini.gif')}
+.psonpsp			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/playstationonpsp.png')}
+.psponps3			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/psponps3.png')}
+.rcastudioii		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/RCAII.png')}
+.retro-other	 	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/retroother.png')}
+.saturn				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/saturn.png')}
+.sg-1000			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/sg1000.png')}
+.sharpx68000		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/sharp x86000.png')}
+.snkneogeo			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/snkneogeo.png')}
+.snkneogeopocket	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/neogeopocket.png')}
+.snes				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/supernes.png')}
+.supernes			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/supernes.png')}
+.switch				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/switch.png')}
+.switch2				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/switch2.png')}
+.taitotypex			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/taitotypex.png')}
+.tandycolorcomputer	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/tandycolor.png')}
+.tangerineoric		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/tangerineoric.png')}
+.thomsonmo5			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/thomsonm05.png')}
+.turbografx			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/turbografx.png')}
+.vectrex			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/vectrex.png')}
+.virtualboy			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/virtualboy.png')}
+.v\.smile			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/vsmile.png')}
+.watarasupervision	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/watarasupervision.png')}
+.wii				     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/wii.png')}
+.wiiu 				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/wiiu.png');}
+.wiiuvc				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/wiiuvc.png');}
+.wiivc				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/wiivc.png')}
+.wiiware 			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/wiiware.png')}
+.windows			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/windows.png'); }
+.windows95			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/windows95.png')}
+.windowsxp			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/windowsxp.png')}
+.wonderswan			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/wonderswan.png')}
+.xbla				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/xbla.png')}
+.xbox				{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/xbox.png')}
+.xbox360			     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/xbox360.png')}
+.xboxon360			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/xboxon360.png')}
+.zxspectrum			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/zxspectrum.png')}
+
+.cats_guides, .cats_ebooks {background-image:url('https://gazellegames.net/static/styles/game_room/images/caticons/ebook.png'); width:28px; height:28px; display: inline-block;}
+.cats_applications {height:28px; width:28px;background-image:url('https://gazellegames.net/static/styles/game_room/images/caticons/apps.png'); display: inline-block;}
+.cats_ost {width:28px; height:28px; background-image:url('https://gazellegames.net/static/styles/game_room/images/caticons/music.png'); display: inline-block;}
+
+/* Unsorted */
+.casiopv-1000		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/casiopv-1000.png')}
+.hartunggamemaster	     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/hartunggamemaster.png')}
+.amigacd32			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/amigacd32-2.png')}
+.commodore128		     {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/commodore128.png')}
+.philipscd-i			{height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/philipsCDI.png')}
+.sharpx1                 {height:28px; width:28px; display:inline-block; background: url('https://gazellegames.net/static/styles/game_room/images/caticons/sharpx1.png')}
+
+/* ---- 商店与资料站图标（webLinks.css）------------------------------------------ */
+.Amazon,.Bandcamp,.BoardGameGeek,.Desura,.Discogs,.DriveThruRPG,.EpicGames,
+.GameFAQs,.GamesWebsite,.Giantbomb,.Goodreads,.GOG,.GooglePlay,.GooglePlayBooks,
+.HowLongToBeat,.HumbleBundle,.Itch,.iTunes,.MobyGames,.MusicBrainz,.NexusMods,
+.Nintendo,.Oculus,.Origin,.Ouya,.PCGamingWiki,.PSN,.RPGGeek,.RPGnet,.Steam,
+.VGMdb,.VNDB,.Wikipedia,.XboxStore {
+    background-size:contain;}
+
+.Amazon              {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Amazon.png");}
+.Bandcamp            {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Bandcamp.png");}
+.BoardGameGeek       {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/BoardGameGeek.png");}
+.Desura              {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Desura.png");}
+.DriveThruRPG        {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/DriveThruRPG.png");}
+.Discogs             {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Discogs.png");}
+.EpicGames           {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/EpicGames.png");}
+.GameFAQs            {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/GameFAQs.png");}
+.GamesWebsite        {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/GamesWebsite.png");}
+.Giantbomb           {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Giantbomb.png");}
+.Goodreads           {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Goodreads.png");}
+.GOG                 {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/GOG.png");}
+.GooglePlay          {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/GooglePlay.png");}
+.GooglePlayBooks     {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/GooglePlayBooks.png");}
+.HowLongToBeat       {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/HowLongToBeat.png");}
+.HumbleBundle        {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/HumbleBundle.png");}
+.Itch                {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Itch.png");}
+.iTunes              {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/iTunes.png");}
+.MobyGames           {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/MobyGames.png");}
+.MusicBrainz         {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/MusicBrainz.png");}
+.NexusMods           {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/NexusMods.png");}
+.Nintendo            {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Nintendo.png");}
+.Oculus              {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Oculus.png");}
+.Origin              {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Origin.png");}
+.Ouya                {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Ouya.png");}
+.PCGamingWiki        {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/PCGamingWiki.png");}
+.PSN                 {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/PSN.png");}
+.RPGGeek             {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/RPGGeek.png");}
+.RPGnet              {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/RPGnet.png");}
+.Steam               {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/steam2.png");}
+.VGMdb               {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/VGMdb.png");}
+.VNDB                {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/VNDB.png");}
+.Wikipedia           {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/Wikipedia.png");}
+.XboxStore           {background-image:url("https://gazellegames.net/static/styles/game_room/images/weblinks/XboxStore.png");}
+

@@ -15,6 +15,11 @@
      5  tr.group_torrent .edition_info 同上
    ========================================================================== */
 
+/* 站点皮肤不加载时 body 保留 UA 的 8px margin：整页窄 16px、内容整体左偏 */
+body {
+  margin: 0;
+}
+
 html {
   background-color: var(--m-1);
 }
