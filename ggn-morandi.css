@@ -1546,21 +1546,41 @@ select:hover {
   padding-top: 0;
 }
 
+/* 面板行：固定 30px 行高 + 30px 步进 ⇒ 视觉上是"一整块面板"。
+   之前每行高度由内容撑开（统计项 62px）、步进却是 30px，
+   于是行与行互相压盖、行间还漏出页面背景——截图里那个破碎的菜单就是它。 */
 #header #userinfo_minor li,
 #header #userinfo_stats li {
   position: absolute;
   top: 100%;
-  right: 0;   /* 两个入口都在用户条右端，面板向左展开才不会顶出视口 */
-  width: 208px;
-  margin: 0 !important; /* 站点自带 margin:0!important，必须同权重覆盖 */
-  border: 1px solid var(--ln);
-  border-bottom: 0;
+  right: 0;
+  box-sizing: border-box;
+  width: 216px;
+  height: 30px;
+  margin: 0 !important;          /* 站点自带 margin:0!important */
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--ln);
+  border-right: 1px solid var(--ln);
   background-color: var(--m-4);
+  background-image: none;
   border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  font-size: var(--t-xs);
+  line-height: 30px;
+  white-space: nowrap;
 }
 
-#header #userinfo_minor li:last-child,
-#header #userinfo_stats li:last-child {
+/* 首行/末行补齐上下边与圆角，整体看起来像一个面板 */
+#header #userinfo_minor li:first-of-type,
+#header #userinfo_stats li:first-of-type {
+  border-top: 1px solid var(--ln);
+  border-radius: var(--r2) var(--r2) 0 0;
+}
+
+#header #userinfo_minor li:last-of-type,
+#header #userinfo_stats li:last-of-type {
   border-bottom: 1px solid var(--ln);
   border-radius: 0 0 var(--r2) var(--r2);
 }
@@ -1568,17 +1588,20 @@ select:hover {
 #header #userinfo_minor li a,
 #header #userinfo_stats li a {
   display: block;
-  padding: var(--s2) var(--s3);
+  height: 30px;
+  padding: 0 var(--s3);
+  overflow: hidden;
   color: var(--tx-1);
-  font-size: var(--t-sm);
-  text-decoration: none;
+  font-size: var(--t-xs);
+  line-height: 30px;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 #header #userinfo_minor li:hover,
 #header #userinfo_stats li:hover {
   background-color: var(--m-5);
-  border-color: var(--ln-strong);
 }
 
 #header #userinfo_minor li a:hover,
@@ -1592,27 +1615,26 @@ select:hover {
   top: 100%;
 }
 
-/* 逐项错开：行高 32px（29px 内容 + 1px 边线 + 2px 余量） */
-#header #userinfo_minor li:nth-of-type(2), #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
-#header #userinfo_minor li:nth-of-type(3), #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
-#header #userinfo_minor li:nth-of-type(4), #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
-#header #userinfo_minor li:nth-of-type(5), #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
-#header #userinfo_minor li:nth-of-type(6), #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
-#header #userinfo_minor li:nth-of-type(7), #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
-#header #userinfo_minor li:nth-of-type(8), #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
-#header #userinfo_minor li:nth-of-type(9), #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
-#header #userinfo_minor li:nth-of-type(10), #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
-#header #userinfo_minor li:nth-of-type(11), #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
-#header #userinfo_minor li:nth-of-type(12), #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
-#header #userinfo_minor li:nth-of-type(13), #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
-#header #userinfo_minor li:nth-of-type(14), #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
+/* 逐项错开：步进必须等于行高（30px），否则会压盖 */
+#header #userinfo_minor li:nth-of-type(2), #header #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
+#header #userinfo_minor li:nth-of-type(3), #header #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
+#header #userinfo_minor li:nth-of-type(4), #header #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
+#header #userinfo_minor li:nth-of-type(5), #header #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
+#header #userinfo_minor li:nth-of-type(6), #header #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
+#header #userinfo_minor li:nth-of-type(7), #header #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
+#header #userinfo_minor li:nth-of-type(8), #header #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
+#header #userinfo_minor li:nth-of-type(9), #header #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
+#header #userinfo_minor li:nth-of-type(10), #header #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
+#header #userinfo_minor li:nth-of-type(11), #header #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
+#header #userinfo_minor li:nth-of-type(12), #header #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
+#header #userinfo_minor li:nth-of-type(13), #header #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
+#header #userinfo_minor li:nth-of-type(14), #header #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
 
-/* 统计项：保留站点自带的小图标（已下载，0 额外成本），只调间距与字色 */
+/* 统计项：保留站点自带的小图标，左侧留出图标位，行高仍锁 30px */
 #header #userinfo_stats li {
-  padding: var(--s2) var(--s3) var(--s2) 24px;
+  padding-left: 26px;
   background-repeat: no-repeat;
-  background-position: 6px 50%;
-  font-size: var(--t-xs);
+  background-position: 8px 50%;
 }
 
 .notification_bubble {
@@ -2252,9 +2274,22 @@ table {
   width: 100%;
 }
 
+/* 单元格默认顶端对齐。
+   默认的 middle 会让多行内容在单元格里上下居中——论坛帖子、资料页的
+   多行信息因此看起来"浮"在行中间，读起来很别扭（用户明确提出的问题）。
+   单行数值列在下面单独改回 middle。 */
 th,
 td {
   padding: var(--s2) var(--s3);
+  vertical-align: top;
+}
+
+.torrent_table td,
+#torrents .colhead td,
+#torrents .colhead_dark td,
+#grouplinks td,
+td.center,
+td.nobr {
   vertical-align: middle;
 }
 
@@ -3596,7 +3631,10 @@ body#shop #items_list,
 body#user #items_list,
 #crafting_recipes #items_list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(228px, 1fr));
+  /* 列宽 232：1280 内容区放得下 5 列（每列 242），
+     物品图为 1:1 的 512px 原图，104px 显示时仍能辨认轮廓；
+     再窄会把"Empowered Quartz Loop of Aggression"这类长名压成三行。 */
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
   gap: var(--s3);
   float: none;
   width: auto;
@@ -3649,7 +3687,7 @@ body#user #items_list > li.item_li > form,
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 96px;
+  height: 104px;
   float: none;
   margin: 0;
   padding: 0;
@@ -3659,7 +3697,7 @@ body#user #items_list > li.item_li > form,
 
 #items_list li.item_li img.item_image {
   max-width: 100%;
-  max-height: 96px;
+  max-height: 104px;
   width: auto;
   height: auto;
   margin: 0;
@@ -3851,6 +3889,7 @@ body#user #items_list > li.item_li > form,
 #crafting_panel #items,
 #trading_panel #items {
   display: block;
+  float: left;
   box-sizing: border-box;
   width: auto;
   max-width: 240px;
@@ -4186,6 +4225,250 @@ body#user #items_list > li.item_li > form,
 .webLinks a,
 .webLinks img {
   vertical-align: middle;
+}
+
+
+/* ==========================================================================
+   8. 论坛的读/未读图标
+   站点把这些图标写成皮肤 CSS 的 background（ambrose: td.unread{background:
+   url(images/balloon-unread.png)}）。皮肤不加载后就是一片空白格。
+   这里直接引用站点自己的那几张 PNG（同源、强缓存），不重画。
+   ========================================================================== */
+#forums #content td.read,
+#forums #content td.unread,
+#forums #content td.read_sticky,
+#forums #content td.unread_sticky,
+#forums #content td.read_locked,
+#forums #content td.unread_locked,
+#forums #content td.read_locked_sticky,
+#forums #content td.unread_locked_sticky,
+#forums .forum_index td.read,
+#forums .forum_index td.unread {
+  box-sizing: border-box;
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0;
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  vertical-align: middle;
+}
+
+#forums #content td.read,
+#forums .forum_index td.read {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/balloon.png");
+}
+
+#forums #content td.unread,
+#forums .forum_index td.unread {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/balloon-unread.png");
+}
+
+#forums td.read_sticky {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/sticky.png");
+}
+
+#forums td.unread_sticky {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/sticky-unread.png");
+}
+
+#forums td.read_locked {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/lock.png");
+}
+
+#forums td.unread_locked {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/lock-unread.png");
+}
+
+#forums td.read_locked_sticky {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/lock-sticky.png");
+}
+
+#forums td.unread_locked_sticky {
+  background-image: url("https://gazellegames.net/static/styles/ambrose/images/lock-sticky-unread.png");
+}
+
+/* "跳到最新一帖"的小箭头，同样是皮肤背景图 */
+#forums img[src$="go_last_read.png"],
+.last_read {
+  opacity: 0.7;
+}
+
+.last_read:hover {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   9. 合成台面板的底图
+   原设计是一张 550×370 的手绘木台（crafting_panel.jpg），槽位贴在上面。
+   皮肤不加载后只剩一个空框；这里把那张图显式挂回来。
+   ========================================================================== */
+#crafting_panel #slots_panel {
+  box-sizing: border-box;
+  width: 550px;
+  height: 370px;
+  max-width: 100%;
+  padding: var(--s3);
+  background-color: var(--m-1);
+  background-image: url("https://gazellegames.net/static/styles/game_room/images/shop/crafting_panel.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   10. 合成台 / 装备面板的槽位
+   皮肤里这两个面板是"550×370 木台 / 550×800 纸娃娃 + 106×106 绝对定位格子"。
+   皮肤不加载后格子失去定位、退回文档流，白底一个一个堆在面板顶部
+   （截图里那条浅色横条就是它们）。坐标与尺寸照抄皮肤，不做改动。
+   ========================================================================== */
+
+#crafting_panel .itemslot,
+#equipment .itemslot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: 106px;
+  height: 106px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--r2);
+}
+
+#crafting_panel .itemslot .item,
+#equipment .itemslot .item {
+  box-sizing: border-box;
+  width: 91px;
+  height: 91px;
+  margin: 1px;
+  border-width: 2px;
+}
+
+#crafting_panel .itemslot .item img,
+#equipment .itemslot .item img {
+  max-width: 87px;
+  max-height: 87px;
+  padding: 2px;
+}
+
+/* 拖拽悬停时给一点反馈（原来靠皮肤的 glow） */
+#crafting_panel .itemslot.highlight,
+#equipment .itemslot.highlight {
+  box-shadow: inset 0 0 0 2px var(--sage-i);
+}
+
+/* 合成台：3×3 格 + 结果格 */
+#crafting_panel .itemslot#slot_0 { margin: 13px 0 0 13px; }
+#crafting_panel .itemslot#slot_1 { margin: 13px 0 0 132px; }
+#crafting_panel .itemslot#slot_2 { margin: 13px 0 0 251px; }
+#crafting_panel .itemslot#slot_3 { margin: 132px 0 0 13px; }
+#crafting_panel .itemslot#slot_4 { margin: 132px 0 0 132px; }
+#crafting_panel .itemslot#slot_5 { margin: 132px 0 0 251px; }
+#crafting_panel .itemslot#slot_6 { margin: 251px 0 0 13px; }
+#crafting_panel .itemslot#slot_7 { margin: 251px 0 0 132px; }
+#crafting_panel .itemslot#slot_8 { margin: 251px 0 0 251px; }
+#crafting_panel .itemslot#CraftingResult { margin: 131px 0 0 431px; }
+
+/* 装备页：纸娃娃面板 + 15 个格子 */
+#equipment #equip_panel {
+  position: relative;
+  float: right;          /* 皮肤里是 .flright；改成 none 会掉到物品栏下面 */
+  display: block;
+  box-sizing: border-box;
+  width: 550px;
+  height: 800px;
+  max-width: 100%;
+  background-color: var(--m-1);
+  background-image: url("https://gazellegames.net/static/styles/game_room/images/shop/equipment_panel.jpg");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 100% 100%;
+  border: 1px solid var(--ln);
+  border-radius: var(--r3);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+#equipment .itemslot#slot_1  { margin: 108px 0 0 217px; }
+#equipment .itemslot#slot_9  { margin: 227px 0 0 217px; }
+#equipment .itemslot#slot_2  { margin: 346px 0 0 217px; }
+#equipment .itemslot#slot_4  { margin: 465px 0 0 217px; }
+#equipment .itemslot#slot_6  { margin: 584px 0 0 217px; }
+#equipment .itemslot#slot_5  { margin: 333px 0 0 98px; }
+#equipment .itemslot#slot_3  { margin: 333px 0 0 336px; }
+#equipment .itemslot#slot_11 { margin: 215px 0 0 61px; }
+#equipment .itemslot#slot_10 { margin: 215px 0 0 373px; }
+#equipment .itemslot#slot_8  { margin: 451px 0 0 61px; }
+#equipment .itemslot#slot_7  { margin: 451px 0 0 373px; }
+#equipment .itemslot#slot_13 { margin: 57px 0 0 23px; }
+#equipment .itemslot#slot_12 { margin: 56px 0 0 389px; }
+#equipment .itemslot#slot_14 { margin: 637px 0 0 20px; }
+#equipment .itemslot#slot_15 { margin: 637px 0 0 414px; }
+
+/* ==========================================================================
+   11. 论坛帖子：行距与头像列
+   单元格改回 top 对齐后再把行距收到 1.6——原来 11px 字配 2 倍行高，
+   每行文字像浮在行中间，读起来很散。
+   ========================================================================== */
+/* 固定表格布局：colgroup 的宽度才会真正生效。
+   否则浏览器按内容自动分配，头像列被压到 80px，
+   "Joined 8 years, 4 months ago" 会被折成每行两三个词。 */
+#forums .forum_post {
+  width: 100%;
+  table-layout: fixed;
+}
+
+#forums .forum_post col.col_avatar,
+#forums .forum_post .avatar {
+  width: 168px;
+}
+
+#forums .forum_post td.avatar {
+  width: 168px;
+  padding: var(--s3);
+  vertical-align: top;
+  font-size: var(--t-micro);
+  line-height: 1.5;
+  color: var(--tx-2);
+}
+
+#forums .forum_post td.avatar img.avatar {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  margin: 0 0 var(--s2);
+}
+
+#forums .forum_post td.body {
+  vertical-align: top;
+  line-height: 1.65;
+  font-size: var(--t-0);
+}
+
+#forums .forum_post td.body blockquote {
+  margin: var(--s2) 0;
+}
+
+/* 正文里的空行：内容里的 <br><br> 保留，但不额外撑高 */
+#forums .forum_post td.body br {
+  line-height: 1.65;
+}
+
+
+/* 空的 li / ul（站点在 #items_navigation 里有几个没闭合的空项）
+   会渲染成一个孤零零的项目符号，出现在页面标题上方。 */
+#content ul:empty,
+#content li:empty,
+#items_navigation li:empty {
+  display: none;
 }
 
 /* ==========================================================================

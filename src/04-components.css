@@ -72,9 +72,22 @@ table {
   width: 100%;
 }
 
+/* 单元格默认顶端对齐。
+   默认的 middle 会让多行内容在单元格里上下居中——论坛帖子、资料页的
+   多行信息因此看起来"浮"在行中间，读起来很别扭（用户明确提出的问题）。
+   单行数值列在下面单独改回 middle。 */
 th,
 td {
   padding: var(--s2) var(--s3);
+  vertical-align: top;
+}
+
+.torrent_table td,
+#torrents .colhead td,
+#torrents .colhead_dark td,
+#grouplinks td,
+td.center,
+td.nobr {
   vertical-align: middle;
 }
 
