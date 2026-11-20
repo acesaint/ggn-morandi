@@ -53,6 +53,25 @@ https://cdn.jsdelivr.net/gh/acesaint/ggn-morandi@main/ggn-morandi.css
 
 ---
 
+## 一件重要的事：站点跑的是 ambrose
+
+GazelleGames 的默认皮肤是 **ambrose**（`static/styles/ambrose/style.css`，单文件 141 KB），
+它**完全没有 CSS 变量**，颜色与几何全是写死的字面值：
+
+```css
+body  { background:#0E1720; color:#e1ecf1; font-size:8pt }
+a     { color:#7FB7D3; border-bottom:dotted 1px #888 }
+tr    { background-color:#f2ffaa }        /* 每一行都是浅黄底 */
+tr a  { color:black }                     /* 行内链接是黑字 */
+td    { border:1px solid #576603 }        /* 每格一道橄榄绿边 */
+.colhead { background:url(ColHeadGrad.png); color:black }
+```
+
+所以本主题不存在"改几个变量"这回事：把底色改暗之后，必须**逐个把 ambrose 的
+字面色与几何覆盖掉**，否则就会出现"深底黑字"、浅黄横带、蓝色渐变块。
+`src/02b-ambrose.css` 就是这一层，它的每一条都对应 ambrose 的一条具体规则，
+注释里写了对方的原始值。
+
 ## 仓库结构
 
 ```
@@ -61,6 +80,7 @@ ggn-morandi.user.css   发布产物：带 UserStyle 头（Stylus 用这个）
 src/                   源文件，按层拆分
   ├ 01-tokens.css      颜色 / 间距 / 字号 / 圆角 + 站点变量桥接
   ├ 02-base.css        几何中和：清掉绝对定位、固定高度、位图背景
+  ├ 02b-ambrose.css    针对 ambrose 的逐条覆盖（字面色 + 固定宽度 + 渐变图）
   ├ 03-shell.css       头部三行网格、用户条、导航、搜索、内容、页脚、断点
   ├ 04-components.css  盒子、表格、表单、按钮
   ├ 05-pages.css       浏览、种子组、论坛、资料、合集、分页

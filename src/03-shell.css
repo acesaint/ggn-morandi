@@ -27,7 +27,7 @@
 }
 
 /* ---- 1. 用户条 ----------------------------------------------------- */
-#userinfo {
+#header #userinfo {
   grid-column: 1;
   grid-row: 1;
   display: flex;
@@ -39,24 +39,26 @@
   font-size: var(--t-sm);
 }
 
-#userinfo a {
+#header #userinfo a {
   color: var(--tx-1);
   text-decoration: none;
 }
 
-#userinfo a:hover {
+#header #userinfo a:hover {
   color: var(--tx-hi);
 }
 
-#userinfo_username {
+#header #userinfo_username {
   display: flex;
+  flex-wrap: nowrap;      /* 桌面一行；换行会把 62px 高的列表塞进 38px 的行里，上下各被裁 12px */
   align-items: center;
   gap: var(--s2);
+  min-width: 0;           /* 允许在 flex 行里收缩，否则整条用户栏被撑到 532px */
   list-style: none;
   font-size: var(--t-sm);
 }
 
-#userinfo_username li {
+#header #userinfo_username li {
   position: relative;
   float: none;
   display: flex;
@@ -66,7 +68,7 @@
   list-style: none;
 }
 
-#userinfo_username .brackets {
+#header #userinfo_username .brackets {
   margin: 0;
   padding: 0 var(--s1);
   font-size: var(--t-xs);
@@ -74,7 +76,7 @@
   line-height: 1;
 }
 
-#userinfo_username .username_badges {
+#header #userinfo_username .username_badges {
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -119,7 +121,7 @@
   text-decoration: none;
 }
 
-#userinfo_username {
+#header #userinfo_username {
   position: relative;
 }
 
@@ -132,12 +134,12 @@
    （#userinfo_stats:hover li，特异度 1-2-1），会盖掉我们较低特异度的
    top 值；translateY 它没碰过，可以稳定错开。
    ------------------------------------------------------------------ */
-#userinfo_stats {
+#header #userinfo_stats {
   margin-left: auto;   /* 真实 DOM 里统计/私信两组位于用户条右端 */
 }
 
-#userinfo_minor,
-#userinfo_stats {
+#header #userinfo_minor,
+#header #userinfo_stats {
   flex: 0 0 32px;      /* 不让 flex 把图标按钮压成 16px——真实页面 1100 档会压 */
   position: relative;
   display: flex;
@@ -153,8 +155,8 @@
   cursor: pointer;
 }
 
-#userinfo_minor::before,
-#userinfo_stats::before {
+#header #userinfo_minor::before,
+#header #userinfo_stats::before {
   content: "";
   width: 16px;
   height: 16px;
@@ -164,34 +166,41 @@
   mask: var(--i-menu) center / contain no-repeat;
 }
 
-#userinfo_stats::before {
+#header #userinfo_stats::before {
   -webkit-mask-image: var(--i-stats);
   mask-image: var(--i-stats);
 }
 
-#userinfo_minor:hover,
-#userinfo_stats:hover {
+#header #userinfo_minor:hover li,
+#header #userinfo_minor:focus-within li,
+#header #userinfo_stats:hover li,
+#header #userinfo_stats:focus-within li {
+  display: block;
+}
+
+#header #userinfo_minor:hover,
+#header #userinfo_stats:hover {
   width: 32px;
   height: 32px;
   padding: 0;
   background-color: var(--m-4);
 }
 
-#userinfo_minor:hover::before,
-#userinfo_stats:hover::before {
+#header #userinfo_minor:hover::before,
+#header #userinfo_stats:hover::before {
   background-color: var(--tx-hi);
 }
 
 /* 站点 hover 时把 ul 撑高、补 padding-top —— 在这里归零，尺寸恒定 */
-#userinfo_minor:hover {
+#header #userinfo_minor:hover {
   overflow: visible;
   background-position: 0 0;
   background-image: none;
   padding-top: 0;
 }
 
-#userinfo_minor li,
-#userinfo_stats li {
+#header #userinfo_minor li,
+#header #userinfo_stats li {
   position: absolute;
   top: 100%;
   right: 0;   /* 两个入口都在用户条右端，面板向左展开才不会顶出视口 */
@@ -203,14 +212,14 @@
   border-radius: 0;
 }
 
-#userinfo_minor li:last-child,
-#userinfo_stats li:last-child {
+#header #userinfo_minor li:last-child,
+#header #userinfo_stats li:last-child {
   border-bottom: 1px solid var(--ln);
   border-radius: 0 0 var(--r2) var(--r2);
 }
 
-#userinfo_minor li a,
-#userinfo_stats li a {
+#header #userinfo_minor li a,
+#header #userinfo_stats li a {
   display: block;
   padding: var(--s2) var(--s3);
   color: var(--tx-1);
@@ -219,40 +228,40 @@
   white-space: nowrap;
 }
 
-#userinfo_minor li:hover,
-#userinfo_stats li:hover {
+#header #userinfo_minor li:hover,
+#header #userinfo_stats li:hover {
   background-color: var(--m-5);
   border-color: var(--ln-strong);
 }
 
-#userinfo_minor li a:hover,
-#userinfo_stats li a:hover {
+#header #userinfo_minor li a:hover,
+#header #userinfo_stats li a:hover {
   color: var(--tx-hi);
   text-decoration: none;
 }
 
 /* 站点 hover 时写死 top:28px，同特异度后来居上，把它压回 100% */
-#userinfo_stats:hover li {
+#header #userinfo_stats:hover li {
   top: 100%;
 }
 
 /* 逐项错开：行高 32px（29px 内容 + 1px 边线 + 2px 余量） */
-#userinfo_minor li:nth-of-type(2), #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
-#userinfo_minor li:nth-of-type(3), #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
-#userinfo_minor li:nth-of-type(4), #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
-#userinfo_minor li:nth-of-type(5), #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
-#userinfo_minor li:nth-of-type(6), #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
-#userinfo_minor li:nth-of-type(7), #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
-#userinfo_minor li:nth-of-type(8), #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
-#userinfo_minor li:nth-of-type(9), #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
-#userinfo_minor li:nth-of-type(10), #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
-#userinfo_minor li:nth-of-type(11), #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
-#userinfo_minor li:nth-of-type(12), #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
-#userinfo_minor li:nth-of-type(13), #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
-#userinfo_minor li:nth-of-type(14), #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
+#header #userinfo_minor li:nth-of-type(2), #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
+#header #userinfo_minor li:nth-of-type(3), #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
+#header #userinfo_minor li:nth-of-type(4), #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
+#header #userinfo_minor li:nth-of-type(5), #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
+#header #userinfo_minor li:nth-of-type(6), #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
+#header #userinfo_minor li:nth-of-type(7), #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
+#header #userinfo_minor li:nth-of-type(8), #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
+#header #userinfo_minor li:nth-of-type(9), #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
+#header #userinfo_minor li:nth-of-type(10), #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
+#header #userinfo_minor li:nth-of-type(11), #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
+#header #userinfo_minor li:nth-of-type(12), #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
+#header #userinfo_minor li:nth-of-type(13), #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
+#header #userinfo_minor li:nth-of-type(14), #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
 
 /* 统计项：保留站点自带的小图标（已下载，0 额外成本），只调间距与字色 */
-#userinfo_stats li {
+#header #userinfo_stats li {
   padding: var(--s2) var(--s3) var(--s2) 24px;
   background-repeat: no-repeat;
   background-position: 6px 50%;
@@ -306,9 +315,10 @@
 }
 
 /* ---- 4. 搜索 ------------------------------------------------------- */
-#searchbars {
+#header #searchbars {
   grid-column: 2;
   grid-row: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -316,7 +326,7 @@
   padding-right: var(--gutter);
 }
 
-#searchbars ul {
+#header #searchbars ul {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -327,7 +337,7 @@
   list-style: none;
 }
 
-#searchbars ul li {
+#header #searchbars ul li {
   position: relative;
   float: none;
   width: auto;
@@ -338,12 +348,12 @@
   background: none;
 }
 
-#searchbars form {
+#header #searchbars form {
   margin: 0;
 }
 
-#searchbars input[type="text"],
-#searchbars input[type="search"] {
+#header #searchbars input[type="text"],
+#header #searchbars input[type="search"] {
   width: 112px;
   height: 26px;
   padding: 0 var(--s2);
@@ -356,19 +366,19 @@
   transition: border-color 0.12s ease, background-color 0.12s ease;
 }
 
-#searchbars input[type="text"]::placeholder {
+#header #searchbars input[type="text"]::placeholder {
   color: var(--tx-2);
 }
 
-#searchbars input[type="text"]:focus,
-#searchbars input[type="search"]:focus {
+#header #searchbars input[type="text"]:focus,
+#header #searchbars input[type="search"]:focus {
   outline: none;
   background-color: var(--m-4);
   border-color: var(--ln-strong);
 }
 
 /* 搜索自动补全：站点把它做成了 0 宽 + 负 left，这里还原成正常浮层 */
-#searchbars ul li ul {
+#header #searchbars ul li ul {
   position: absolute;
   top: 100%;
   left: 0;
@@ -384,7 +394,7 @@
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
-#searchbars ul.autocomplete_list li {
+#header #searchbars ul.autocomplete_list li {
   float: none;
   width: auto;
   margin: 0;
@@ -397,20 +407,20 @@
   text-align: left;
 }
 
-#searchbars ul.autocomplete_list li:hover,
-#searchbars ul.autocomplete_list li.highlight {
+#header #searchbars ul.autocomplete_list li:hover,
+#header #searchbars ul.autocomplete_list li.highlight {
   background-color: var(--m-5);
   color: var(--tx-hi);
 }
 
 /* ---- 5. 主导航 ----------------------------------------------------- */
-#menu {
+#header #menu {
   grid-row: 3;
   background-color: var(--m-1);
   border-top: 1px solid var(--ln);
 }
 
-#menu ul {
+#header #menu ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -422,13 +432,17 @@
   list-style: none;
 }
 
-#menu ul li {
+#header #menu ul li {
   float: none;
   display: flex;
   margin: 0;
 }
 
-#menu ul a {
+#header #menu ul li a {
+  color: var(--tx-1);
+}
+
+#header #menu ul a {
   display: block;
   padding: 0 var(--s3);
   margin: 0;
@@ -441,29 +455,34 @@
   transition: color 0.12s ease, background-color 0.12s ease;
 }
 
-#menu ul li.active a {
+#header #menu ul li.active a {
   color: var(--tx-hi);
   background-color: var(--m-4);
   box-shadow: inset 0 -2px 0 var(--sage-i);
 }
 
-#menu ul li a:hover {
+#header #menu ul li a:hover {
   color: var(--tx-hi);
   background-color: var(--m-4);
   text-decoration: none;
 }
 
 /* ---- 6. 公告与提示条 ----------------------------------------------- */
-#alerts {
-  width: min(var(--shell), 100%);
-  margin: var(--s2) auto 0;
+/* 状态行：buff 在左、staff 提示在右，合成一行，省掉 16px 竖向空间 */
+#header #alerts {
+  grid-column: 2;
+  grid-row: 4;
+  justify-self: end;
+  width: auto;
+  margin: 0;
   padding: 0 var(--gutter);
-  text-align: center;
+  text-align: right;
+  align-self: center;
 }
 
 /* staff 工具条（Tools / 清缓存）：站点用 .blend 把文字做成透明，
    实际只占一条细线。压到 14px 高，别再吃一整行。 */
-#alerts {
+#header #alerts {
   margin: 0;
   padding: 1px var(--gutter);
   font-size: var(--t-micro);
@@ -670,6 +689,26 @@
   }
 }
 
+/* 1400px 以下用户条内容开始变挤：允许换行，行高改为自适应，避免压到搜索区 */
+@media (max-width: 1399px) {
+  #header #userinfo {
+    height: auto;
+    min-height: var(--bar-h);
+  }
+
+  #header #userinfo_username {
+    flex-wrap: wrap;
+  }
+}
+
+/* 6 个搜索框在 1100–1200px 之间会和用户条挤在一起，先把输入框收窄 */
+@media (max-width: 1200px) {
+  #header #searchbars input[type="text"],
+  #header #searchbars input[type="search"] {
+    width: 96px;
+  }
+}
+
 @media (max-width: 1099px) {
   /* 与站点同断点：这一档仍是两列（用户条 + 搜索同一行），只压缩 logo */
   :root {
@@ -686,6 +725,10 @@
 
 @media (max-width: 800px) {
   /* 单列堆叠：logo → 用户条 → 搜索 → 导航 */
+  #header #userinfo_username {
+    flex-wrap: wrap;
+  }
+
   :root {
     --logo-h: 64px;
     --bar-h: 34px;
@@ -700,38 +743,46 @@
     grid-row: 1;
   }
 
-  #userinfo {
+  #header #userinfo {
     grid-row: 2;
     height: var(--bar-h);
   }
 
-  #searchbars {
+  #header #searchbars {
     grid-row: 3;
     justify-content: flex-start;
     padding: 0 var(--gutter) var(--s2);
   }
 
-  #menu {
-    grid-row: 4;
+  #header #menu {
+    grid-row: 5;
   }
 
-  #menu ul {
+  #header #alerts {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-self: stretch;
+    text-align: left;
+    padding: 0 var(--gutter) var(--s1);
+  }
+
+  #header #menu ul {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
     scrollbar-width: none;
   }
 
-  #menu ul::-webkit-scrollbar {
+  #header #menu ul::-webkit-scrollbar {
     display: none;
   }
 
-  #searchbars ul {
+  #header #searchbars ul {
     flex-wrap: wrap;
   }
 
-  #searchbars input[type="text"],
-  #searchbars input[type="search"] {
+  #header #searchbars input[type="text"],
+  #header #searchbars input[type="search"] {
     width: 108px;
   }
 
@@ -767,7 +818,7 @@
   }
 
   /* 窄屏用户条：用户名 + 编辑/登出/捐赠 + 两组图标，500px 装不下一行，允许折行 */
-  #userinfo {
+  #header #userinfo {
     height: auto;
     min-height: var(--bar-h);
     flex-wrap: wrap;

@@ -462,6 +462,640 @@ tr.group_torrent td.edition_info {
 }
 
 /* ==========================================================================
+   02b — ambrose 中和层
+   --------------------------------------------------------------------------
+   站点实际运行的皮肤是 **ambrose**：一个 2010 年代的深底亮行皮肤，单文件
+   `static/styles/ambrose/style.css`（141 KB），**一个 CSS 变量都没有**。
+
+   这意味着两件事：
+     1  01-tokens 里的"站点变量桥接"对 ambrose 是空操作（保留着，为了兼容
+        站点若切回 game_room 皮肤的情况）。
+     2  所有需要改的颜色与几何，必须**按选择器逐条覆盖**，而且特异度要与
+        ambrose 相当或更高——它的选择器普遍比 game_room 深一层。
+
+   这一层只做两件事：把 ambrose 的几何拉回文档流、把它的字面色换成令牌。
+   设计（间距、层级、组件外观）仍然在 03/04/05。
+
+   注意 ambrose 的原始视觉：亮底行（#d7e971 / #f2ffaa）+ **黑字**。
+   我们把行底改暗之后，它的 tr a{color:black}、.tags a{color:#333}、
+   td.label{color:black} 就变成了暗底黑字——这是截图里内容"糊掉"的主因。
+   ========================================================================== */
+
+/* ---- 1. 全局：字号、最小宽度、链接 -------------------------------- */
+body {
+  min-width: 0;                 /* ambrose: 850px，直接废掉手机 */
+  background-color: var(--m-1);
+  color: var(--tx-0);
+  font-family: var(--font);
+  font-size: var(--t-0);
+  height: auto;
+}
+
+/* ambrose 给所有链接一条灰色点线，且 hover 时位移 1px（会抖） */
+a {
+  color: var(--link);
+  border-bottom: 0;
+}
+
+a:hover {
+  color: var(--link-hover);
+  border-bottom: 0;
+  position: static;
+  top: auto;
+  left: auto;
+}
+
+/* 表格内的链接被 ambrose 设成黑色（因为原本是亮底行）。改回亮字。 */
+tr a,
+tr a:hover {
+  color: var(--tx-0);
+  border-bottom: 0;
+}
+
+h2 a:hover {
+  position: static;
+  top: auto;
+  left: auto;
+}
+
+/* ---- 2. 头部几何：把三个绝对定位块拉回文档流 ----------------------
+   ambrose 的画布：#header 420px，里面 #logo(top:34) / #menu(top:230) /
+   #alerts(top:293) / #userinfo(top:318) 全是 absolute，靠坐标叠出来的。
+   ------------------------------------------------------------------ */
+#header {
+  height: auto;
+  background: none;
+}
+
+#logo {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  width: auto;
+  margin: 0;
+  overflow: visible;
+  background-color: var(--m-1);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#logo a {
+  position: static;
+  top: auto;
+  left: auto;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+}
+
+#menu {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  width: auto;
+  margin: 0;
+}
+
+#menu ul {
+  background-image: none;
+  height: var(--nav-h);
+}
+
+#menu ul li {
+  width: auto;
+  height: auto;
+  line-height: normal;
+}
+
+#menu ul li a {
+  font-family: var(--font);
+  font-size: var(--t-sm);
+  color: var(--tx-1);
+  line-height: var(--nav-h);
+  padding: 0 var(--s3);
+  text-decoration: none;
+}
+
+/* ambrose 用两张位图做导航悬停（.transparency / .hover），我们改用纯色 */
+#menu ul li .transparency,
+#menu ul li .hover {
+  display: none;
+}
+
+#userinfo {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  width: auto;
+  height: auto;
+  background: none;
+}
+
+#userinfo #userinfo_username {
+  float: none;
+  width: auto;
+  margin: 0;
+}
+
+#userinfo #userinfo_stats {
+  float: none;
+  width: auto;
+  margin: 0;
+}
+
+#userinfo #userinfo_stats li {
+  float: none;
+  height: auto;
+}
+
+#userinfo #userinfo_minor {
+  display: flex;
+  width: auto;
+  margin: 0;
+  background-image: none;
+}
+
+/* 下拉项默认隐藏，悬停/聚焦才展开（ambrose 是 inline 全部铺开，我们要收起来） */
+#header #userinfo_minor li,
+#header #userinfo_stats li {
+  display: none;
+}
+
+#userinfo #userinfo_minor li a:link,
+#userinfo #userinfo_minor li a:visited {
+  width: auto;
+  margin: 0;
+  line-height: normal;
+  font-family: var(--font);
+  border-bottom: 0;
+}
+
+#header #alerts {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  width: auto;
+}
+
+#header #alerts .alertbar a {
+  color: var(--tx-2);
+  border-bottom: 0;
+}
+
+#header #searchbars ul {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+#header #searchbars input {
+  background-image: none;
+  background-color: var(--m-2);
+  color: var(--tx-0);
+  border: 1px solid var(--ln);
+  height: 26px;
+  line-height: 24px;
+  width: 112px;
+}
+
+#header #searchbars ul li ul {
+  border: 1px solid var(--ln);
+  background-color: var(--m-4);
+}
+
+/* 弹层定位：ambrose 用 #header .sub{position:relative; top:20px} 把面板塞在
+   用户条里，改成贴在触发块下方的浮层（显隐仍归站点 JS） */
+#header .sub {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 0;
+  height: auto;
+}
+
+/* 用户名弹层：ambrose 用 ColHeadGrad 位图 + 橄榄绿描边 */
+#header .sub span {
+  background: none;
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+}
+
+/* #us_pop 的条目由站点 JS 控制显隐，这里只给外观 */
+#us_pop span {
+  background: none;
+  background-color: var(--m-4);
+}
+
+#us_pop span:hover {
+  background-color: var(--m-5);
+}
+
+#wrapper {
+  padding-bottom: 0;            /* ambrose: 300px，为绝对定位页脚留的 */
+}
+
+/* ---- 3. 表格：亮底 + 黑字 → 暗底 + 亮字 --------------------------- */
+table {
+  border-color: var(--ln-hair);
+}
+
+td.label {
+  background-color: transparent;
+  color: var(--tx-1);
+}
+
+.colhead,
+.colhead_dark {
+  background-image: none;
+  background-color: var(--m-3);
+  color: var(--tx-1);
+  height: auto;
+  padding: var(--s2) var(--s3);
+}
+
+.colhead a,
+.colhead_dark a {
+  color: var(--tx-1);
+}
+
+.rowa td {
+  background-color: var(--rowa);
+}
+
+.rowb td {
+  background-color: var(--rowb);
+}
+
+.rowa .rating_container,
+.rowb .rating_container {
+  background-color: var(--m-4);
+}
+
+#taglist a,
+.tags a {
+  color: var(--tx-2);
+}
+
+#taglist a:hover,
+.tags a:hover {
+  color: var(--tx-0);
+}
+
+/* ---- 4. 表单 ------------------------------------------------------ */
+input,
+textarea {
+  background-image: none;
+  background-color: var(--m-4);
+  border: 1px solid var(--ln);
+  color: var(--tx-0);
+}
+
+input:hover {
+  border-color: var(--ln-strong);
+}
+
+#upload input {
+  background-image: none;
+  background-color: var(--m-4);
+  border-color: var(--ln);
+  color: var(--tx-0);
+}
+
+#upload input:hover {
+  border-color: var(--ln-strong);
+}
+
+/* ---- 5. 页脚 ------------------------------------------------------ */
+#footer {
+  position: static;
+  bottom: auto;
+  height: auto;
+  background-image: none;
+  color: var(--tx-2);
+}
+
+#footer_image {
+  display: none;                /* 254px 高的位图装饰，纯装饰 */
+}
+
+#footer #server_stats {
+  position: static;
+  color: var(--tx-2);
+}
+
+#footer #copyright {
+  margin-left: 0;
+  position: static;
+}
+
+/* ---- 6. 浏览页筛选面板 -------------------------------------------- */
+/* ambrose: #torrents .filter_torrents{width:75%; margin:0 auto} —— 会把面板
+   缩到中间、两边留空，看起来像是没对齐 */
+#torrents .filter_torrents {
+  width: 100%;
+  margin: 0 0 var(--s3);
+}
+
+/* ---- 7. 全局 buff：站点用 .fa 承载数字 ----------------------------
+   <i class="fa fa-fl-pots">79</i> —— font-awesome 的 .fa 字号很大，
+   不做处理会变成屏幕上最大的元素。
+   ------------------------------------------------------------------ */
+.global_buffs {
+  position: static;
+  left: auto;
+  margin: 0;
+  padding: 0 var(--gutter) var(--s2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s2);
+}
+
+.global_buffs .individual_buff {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s1) var(--s3);
+  background-color: var(--m-3);
+  border: 1px solid var(--ln);
+  border-radius: var(--r2);
+}
+
+.global_buffs .individual_buff > a {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  text-decoration: none;
+  border-bottom: 0;
+}
+
+.global_buffs .fa {
+  font-size: var(--t-sm);
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--warn);
+}
+
+/* 标记里是 <span>标签</span><br><span>状态</span>，把它压成一行 */
+.global_buffs br {
+  display: none;
+}
+
+.global_buffs .buff_text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s1);
+  font-size: var(--t-micro);
+  line-height: 1.2;
+  color: var(--tx-2);
+}
+
+.global_buffs .buff_label {
+  color: var(--tx-1);
+}
+
+.global_buffs .buff_multiplier {
+  color: var(--ok);
+}
+
+/* ---- 8. 按页面写死的宽度 ------------------------------------------
+   ambrose 给几个页面单独钉了宽度，特异度是 (1,1,0)，比 #content 高。
+   ------------------------------------------------------------------ */
+#index #content {
+  width: min(var(--shell), 100%);
+}
+
+#index .thin {
+  width: auto;
+}
+
+/* 搜索/筛选表单里的输入框被钉成 500px，会撑破列 */
+#torrents #content .center .box form div input[type="text"],
+#wiki #content .center .box form div input[type="text"],
+#artist #content .center .box form div input[type="text"] {
+  width: auto;
+  margin-bottom: 0;
+}
+
+/* ---- 9. 裸 tr 的奶黄底 --------------------------------------------
+   ambrose 有一条 `tr{background-color:#f2ffaa}`：它把**每一行**都刷成浅黄，
+   因为原皮肤的表格是"深底 + 亮行 + 黑字"。我们只在 .rowa/.rowb 的 td 上
+   设了底色，所以凡是没带这两个类的行（表头行、帖子行、表单行）全是亮的。
+   这一条不处理，页面就会出现一条条奶白色横带。
+   ------------------------------------------------------------------ */
+tr {
+  background-color: transparent;
+}
+
+/* 表头行仍旧要有一层底色，否则和内容糊在一起 */
+tr.colhead,
+tr.colhead_dark,
+.forum_post tr.colhead_dark {
+  background-color: var(--m-3);
+}
+
+/* 帖子容器与消息箱：原先是奶白色盒子 + 黑字 */
+.forum_post tr {
+  background-color: transparent;
+}
+
+#inbox .box,
+#blog .box {
+  background-color: var(--m-2);
+  color: var(--tx-0);
+}
+
+/* 日历与种子组行的 hover 底 */
+#calendar tr:hover,
+tr.group:hover {
+  background-color: var(--m-4);
+}
+
+/* ---- 10. 页脚 ------------------------------------------------------
+   真实页脚结构：<br><br> + 免责声明 + 版权 + 构建信息。
+   ambrose 用 254px 高、FooterBG.png 贴图，并把它绝对定位贴底。
+   ------------------------------------------------------------------ */
+#footer br {
+  display: none;
+}
+
+#disclaimer_container {
+  max-width: 78ch;
+  margin: 0 0 var(--s2);
+  font-size: var(--t-micro);
+  line-height: 1.6;
+  color: var(--tx-3);
+}
+
+#copyright {
+  font-family: var(--font);
+  font-weight: 400;
+}
+
+#metadata {
+  font-size: var(--t-micro);
+  color: var(--tx-3);
+}
+
+/* ---- 11. 筛选面板的浅蓝底 ------------------------------------------
+   ambrose：
+     #torrents #content .filter_torrents table tr{background:#D4E7EF}
+     #torrents #content .filter_torrents table tr td.label{background:#B1C7E6}
+   特异度 3-1-1 / 3-1-2，盖过了通用的 tr 规则——这就是截图上那条浅蓝色带。
+   ------------------------------------------------------------------ */
+#torrents #content .filter_torrents table tr {
+  background-color: transparent;
+}
+
+#torrents #content .filter_torrents table tr td.label {
+  background-color: transparent;
+  color: var(--tx-1);
+}
+
+/* ---- 12. 每个单元格的橄榄绿描边 ------------------------------------
+   ambrose 的 td 自带 border:1px solid #576603，整张表是一层绿格子。
+   这里把颜色设为透明而不是 border:0：保留那 1px 的占位，避免表格宽度跳动。
+   ------------------------------------------------------------------ */
+td,
+th {
+  border-color: transparent;
+}
+
+/* ---- 13. 用户名旁边的徽章图标 --------------------------------------
+   ambrose 没限制徽章尺寸，原图 39px 高，把用户条（38px）撑高到 55px，
+   导致整条被上下各裁 8px——截图上那行"被切掉的字"就是它。
+   ------------------------------------------------------------------ */
+#header .username_badges img,
+#header .username_badges {
+  max-height: 16px;
+  height: 16px;
+  width: auto;
+  vertical-align: middle;
+}
+
+/* ---- 14. logo 与世界观的融合 --------------------------------------
+   站点 logo 是一张自带深蓝底的艺术图，直接放在暖灰调页面上会像贴了一块冷色板。
+   只降一点饱和与亮度，保留品牌识别，不做其它处理。
+   ------------------------------------------------------------------ */
+#header #logo {
+  filter: saturate(0.82) brightness(0.94);
+}
+
+/* ---- 15. ambrose 的渐变/纹理背景图 --------------------------------
+   它用一堆 PNG 渐变做层次：#header、#menu ul、#userinfo、#footer、
+   .colhead、.sidebar .box、.sidebar .box .head、.main_column .box .head、
+   #main_column_top/bottom、.sub span……
+   深色低饱和的界面里这些 2010 年的蓝黑渐变只会显得脏，全部改成纯色。
+   保留：#logo（品牌图）、平台图标（.windows/.snes…）、外部链接图标（.Steam…）。
+   ------------------------------------------------------------------ */
+#header,
+#userinfo,
+#userinfo #userinfo_minor,
+#footer,
+#menu ul,
+.colhead,
+.colhead_dark,
+.box,
+.box .head,
+.head,
+.sidebar .box,
+.sidebar .box .head,
+.main_column .box .head,
+.main_column .head .newsdate,
+#inbox .head,
+#blog .head,
+#main_column_top,
+#main_column_bottom,
+.sub span,
+#header .sub span,
+#content,
+.thin,
+.main_column,
+.main_column_bg,
+.sidebar {
+  background-image: none;
+}
+
+/* 上面那条只清图，不改底色；这几处需要显式给回莫兰迪的层级 */
+.sidebar .box {
+  background-color: var(--m-2);
+}
+
+.sidebar .box .head,
+.main_column .box .head,
+#inbox .head,
+#blog .head {
+  background-color: var(--m-3);
+}
+
+#content,
+.thin,
+.main_column,
+.main_column_bg,
+.sidebar {
+  background-color: transparent;
+}
+
+/* ---- 16. 固定 762 + 207 的两栏 ------------------------------------
+   ambrose 在 1000px 的 #content 里写死：.main_column 762px、
+   .main_column_bg 762px、.sidebar 207px、.sidebar .box 207px。
+   宽度改成自适应后，侧栏盒子才不会只占一半、主栏也不会留出大块空白。
+   ------------------------------------------------------------------ */
+.main_column_bg {
+  width: auto;
+  overflow: visible;
+}
+
+.main_column {
+  float: left;
+  width: calc(100% - var(--side) - var(--s5));
+}
+
+.sidebar {
+  width: var(--side);
+}
+
+.sidebar .box {
+  width: auto;
+  float: none;
+}
+
+/* 盒子标题被写死 48px 高、行高 48px，字号 12pt */
+.main_column .box .head,
+.sidebar .box .head {
+  height: auto;
+  width: auto;
+  padding: var(--s2) var(--s3);
+}
+
+.main_column .box .head strong {
+  float: none;
+  margin-left: 0;
+  line-height: 1.5;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--tx-0);
+}
+
+/* 新闻日期是 96×35 的贴图胶囊 */
+.main_column .head .newsdate {
+  width: auto;
+  height: auto;
+  padding: 0;
+  line-height: 1.4;
+  color: var(--tx-2);
+  font-size: var(--t-xs);
+}
+
+/* ==========================================================================
    03 — 骨架
    --------------------------------------------------------------------------
    头部从 274px 绝对定位画布改成三行网格：
@@ -490,7 +1124,7 @@ tr.group_torrent td.edition_info {
 }
 
 /* ---- 1. 用户条 ----------------------------------------------------- */
-#userinfo {
+#header #userinfo {
   grid-column: 1;
   grid-row: 1;
   display: flex;
@@ -502,24 +1136,26 @@ tr.group_torrent td.edition_info {
   font-size: var(--t-sm);
 }
 
-#userinfo a {
+#header #userinfo a {
   color: var(--tx-1);
   text-decoration: none;
 }
 
-#userinfo a:hover {
+#header #userinfo a:hover {
   color: var(--tx-hi);
 }
 
-#userinfo_username {
+#header #userinfo_username {
   display: flex;
+  flex-wrap: nowrap;      /* 桌面一行；换行会把 62px 高的列表塞进 38px 的行里，上下各被裁 12px */
   align-items: center;
   gap: var(--s2);
+  min-width: 0;           /* 允许在 flex 行里收缩，否则整条用户栏被撑到 532px */
   list-style: none;
   font-size: var(--t-sm);
 }
 
-#userinfo_username li {
+#header #userinfo_username li {
   position: relative;
   float: none;
   display: flex;
@@ -529,7 +1165,7 @@ tr.group_torrent td.edition_info {
   list-style: none;
 }
 
-#userinfo_username .brackets {
+#header #userinfo_username .brackets {
   margin: 0;
   padding: 0 var(--s1);
   font-size: var(--t-xs);
@@ -537,7 +1173,7 @@ tr.group_torrent td.edition_info {
   line-height: 1;
 }
 
-#userinfo_username .username_badges {
+#header #userinfo_username .username_badges {
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -582,7 +1218,7 @@ tr.group_torrent td.edition_info {
   text-decoration: none;
 }
 
-#userinfo_username {
+#header #userinfo_username {
   position: relative;
 }
 
@@ -595,12 +1231,12 @@ tr.group_torrent td.edition_info {
    （#userinfo_stats:hover li，特异度 1-2-1），会盖掉我们较低特异度的
    top 值；translateY 它没碰过，可以稳定错开。
    ------------------------------------------------------------------ */
-#userinfo_stats {
+#header #userinfo_stats {
   margin-left: auto;   /* 真实 DOM 里统计/私信两组位于用户条右端 */
 }
 
-#userinfo_minor,
-#userinfo_stats {
+#header #userinfo_minor,
+#header #userinfo_stats {
   flex: 0 0 32px;      /* 不让 flex 把图标按钮压成 16px——真实页面 1100 档会压 */
   position: relative;
   display: flex;
@@ -616,8 +1252,8 @@ tr.group_torrent td.edition_info {
   cursor: pointer;
 }
 
-#userinfo_minor::before,
-#userinfo_stats::before {
+#header #userinfo_minor::before,
+#header #userinfo_stats::before {
   content: "";
   width: 16px;
   height: 16px;
@@ -627,34 +1263,41 @@ tr.group_torrent td.edition_info {
   mask: var(--i-menu) center / contain no-repeat;
 }
 
-#userinfo_stats::before {
+#header #userinfo_stats::before {
   -webkit-mask-image: var(--i-stats);
   mask-image: var(--i-stats);
 }
 
-#userinfo_minor:hover,
-#userinfo_stats:hover {
+#header #userinfo_minor:hover li,
+#header #userinfo_minor:focus-within li,
+#header #userinfo_stats:hover li,
+#header #userinfo_stats:focus-within li {
+  display: block;
+}
+
+#header #userinfo_minor:hover,
+#header #userinfo_stats:hover {
   width: 32px;
   height: 32px;
   padding: 0;
   background-color: var(--m-4);
 }
 
-#userinfo_minor:hover::before,
-#userinfo_stats:hover::before {
+#header #userinfo_minor:hover::before,
+#header #userinfo_stats:hover::before {
   background-color: var(--tx-hi);
 }
 
 /* 站点 hover 时把 ul 撑高、补 padding-top —— 在这里归零，尺寸恒定 */
-#userinfo_minor:hover {
+#header #userinfo_minor:hover {
   overflow: visible;
   background-position: 0 0;
   background-image: none;
   padding-top: 0;
 }
 
-#userinfo_minor li,
-#userinfo_stats li {
+#header #userinfo_minor li,
+#header #userinfo_stats li {
   position: absolute;
   top: 100%;
   right: 0;   /* 两个入口都在用户条右端，面板向左展开才不会顶出视口 */
@@ -666,14 +1309,14 @@ tr.group_torrent td.edition_info {
   border-radius: 0;
 }
 
-#userinfo_minor li:last-child,
-#userinfo_stats li:last-child {
+#header #userinfo_minor li:last-child,
+#header #userinfo_stats li:last-child {
   border-bottom: 1px solid var(--ln);
   border-radius: 0 0 var(--r2) var(--r2);
 }
 
-#userinfo_minor li a,
-#userinfo_stats li a {
+#header #userinfo_minor li a,
+#header #userinfo_stats li a {
   display: block;
   padding: var(--s2) var(--s3);
   color: var(--tx-1);
@@ -682,40 +1325,40 @@ tr.group_torrent td.edition_info {
   white-space: nowrap;
 }
 
-#userinfo_minor li:hover,
-#userinfo_stats li:hover {
+#header #userinfo_minor li:hover,
+#header #userinfo_stats li:hover {
   background-color: var(--m-5);
   border-color: var(--ln-strong);
 }
 
-#userinfo_minor li a:hover,
-#userinfo_stats li a:hover {
+#header #userinfo_minor li a:hover,
+#header #userinfo_stats li a:hover {
   color: var(--tx-hi);
   text-decoration: none;
 }
 
 /* 站点 hover 时写死 top:28px，同特异度后来居上，把它压回 100% */
-#userinfo_stats:hover li {
+#header #userinfo_stats:hover li {
   top: 100%;
 }
 
 /* 逐项错开：行高 32px（29px 内容 + 1px 边线 + 2px 余量） */
-#userinfo_minor li:nth-of-type(2), #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
-#userinfo_minor li:nth-of-type(3), #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
-#userinfo_minor li:nth-of-type(4), #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
-#userinfo_minor li:nth-of-type(5), #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
-#userinfo_minor li:nth-of-type(6), #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
-#userinfo_minor li:nth-of-type(7), #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
-#userinfo_minor li:nth-of-type(8), #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
-#userinfo_minor li:nth-of-type(9), #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
-#userinfo_minor li:nth-of-type(10), #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
-#userinfo_minor li:nth-of-type(11), #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
-#userinfo_minor li:nth-of-type(12), #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
-#userinfo_minor li:nth-of-type(13), #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
-#userinfo_minor li:nth-of-type(14), #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
+#header #userinfo_minor li:nth-of-type(2), #userinfo_stats li:nth-of-type(2) { transform: translateY(30px); }
+#header #userinfo_minor li:nth-of-type(3), #userinfo_stats li:nth-of-type(3) { transform: translateY(60px); }
+#header #userinfo_minor li:nth-of-type(4), #userinfo_stats li:nth-of-type(4) { transform: translateY(90px); }
+#header #userinfo_minor li:nth-of-type(5), #userinfo_stats li:nth-of-type(5) { transform: translateY(120px); }
+#header #userinfo_minor li:nth-of-type(6), #userinfo_stats li:nth-of-type(6) { transform: translateY(150px); }
+#header #userinfo_minor li:nth-of-type(7), #userinfo_stats li:nth-of-type(7) { transform: translateY(180px); }
+#header #userinfo_minor li:nth-of-type(8), #userinfo_stats li:nth-of-type(8) { transform: translateY(210px); }
+#header #userinfo_minor li:nth-of-type(9), #userinfo_stats li:nth-of-type(9) { transform: translateY(240px); }
+#header #userinfo_minor li:nth-of-type(10), #userinfo_stats li:nth-of-type(10) { transform: translateY(270px); }
+#header #userinfo_minor li:nth-of-type(11), #userinfo_stats li:nth-of-type(11) { transform: translateY(300px); }
+#header #userinfo_minor li:nth-of-type(12), #userinfo_stats li:nth-of-type(12) { transform: translateY(330px); }
+#header #userinfo_minor li:nth-of-type(13), #userinfo_stats li:nth-of-type(13) { transform: translateY(360px); }
+#header #userinfo_minor li:nth-of-type(14), #userinfo_stats li:nth-of-type(14) { transform: translateY(390px); }
 
 /* 统计项：保留站点自带的小图标（已下载，0 额外成本），只调间距与字色 */
-#userinfo_stats li {
+#header #userinfo_stats li {
   padding: var(--s2) var(--s3) var(--s2) 24px;
   background-repeat: no-repeat;
   background-position: 6px 50%;
@@ -769,9 +1412,10 @@ tr.group_torrent td.edition_info {
 }
 
 /* ---- 4. 搜索 ------------------------------------------------------- */
-#searchbars {
+#header #searchbars {
   grid-column: 2;
   grid-row: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -779,7 +1423,7 @@ tr.group_torrent td.edition_info {
   padding-right: var(--gutter);
 }
 
-#searchbars ul {
+#header #searchbars ul {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -790,7 +1434,7 @@ tr.group_torrent td.edition_info {
   list-style: none;
 }
 
-#searchbars ul li {
+#header #searchbars ul li {
   position: relative;
   float: none;
   width: auto;
@@ -801,12 +1445,12 @@ tr.group_torrent td.edition_info {
   background: none;
 }
 
-#searchbars form {
+#header #searchbars form {
   margin: 0;
 }
 
-#searchbars input[type="text"],
-#searchbars input[type="search"] {
+#header #searchbars input[type="text"],
+#header #searchbars input[type="search"] {
   width: 112px;
   height: 26px;
   padding: 0 var(--s2);
@@ -819,19 +1463,19 @@ tr.group_torrent td.edition_info {
   transition: border-color 0.12s ease, background-color 0.12s ease;
 }
 
-#searchbars input[type="text"]::placeholder {
+#header #searchbars input[type="text"]::placeholder {
   color: var(--tx-2);
 }
 
-#searchbars input[type="text"]:focus,
-#searchbars input[type="search"]:focus {
+#header #searchbars input[type="text"]:focus,
+#header #searchbars input[type="search"]:focus {
   outline: none;
   background-color: var(--m-4);
   border-color: var(--ln-strong);
 }
 
 /* 搜索自动补全：站点把它做成了 0 宽 + 负 left，这里还原成正常浮层 */
-#searchbars ul li ul {
+#header #searchbars ul li ul {
   position: absolute;
   top: 100%;
   left: 0;
@@ -847,7 +1491,7 @@ tr.group_torrent td.edition_info {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
-#searchbars ul.autocomplete_list li {
+#header #searchbars ul.autocomplete_list li {
   float: none;
   width: auto;
   margin: 0;
@@ -860,20 +1504,20 @@ tr.group_torrent td.edition_info {
   text-align: left;
 }
 
-#searchbars ul.autocomplete_list li:hover,
-#searchbars ul.autocomplete_list li.highlight {
+#header #searchbars ul.autocomplete_list li:hover,
+#header #searchbars ul.autocomplete_list li.highlight {
   background-color: var(--m-5);
   color: var(--tx-hi);
 }
 
 /* ---- 5. 主导航 ----------------------------------------------------- */
-#menu {
+#header #menu {
   grid-row: 3;
   background-color: var(--m-1);
   border-top: 1px solid var(--ln);
 }
 
-#menu ul {
+#header #menu ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -885,13 +1529,17 @@ tr.group_torrent td.edition_info {
   list-style: none;
 }
 
-#menu ul li {
+#header #menu ul li {
   float: none;
   display: flex;
   margin: 0;
 }
 
-#menu ul a {
+#header #menu ul li a {
+  color: var(--tx-1);
+}
+
+#header #menu ul a {
   display: block;
   padding: 0 var(--s3);
   margin: 0;
@@ -904,29 +1552,34 @@ tr.group_torrent td.edition_info {
   transition: color 0.12s ease, background-color 0.12s ease;
 }
 
-#menu ul li.active a {
+#header #menu ul li.active a {
   color: var(--tx-hi);
   background-color: var(--m-4);
   box-shadow: inset 0 -2px 0 var(--sage-i);
 }
 
-#menu ul li a:hover {
+#header #menu ul li a:hover {
   color: var(--tx-hi);
   background-color: var(--m-4);
   text-decoration: none;
 }
 
 /* ---- 6. 公告与提示条 ----------------------------------------------- */
-#alerts {
-  width: min(var(--shell), 100%);
-  margin: var(--s2) auto 0;
+/* 状态行：buff 在左、staff 提示在右，合成一行，省掉 16px 竖向空间 */
+#header #alerts {
+  grid-column: 2;
+  grid-row: 4;
+  justify-self: end;
+  width: auto;
+  margin: 0;
   padding: 0 var(--gutter);
-  text-align: center;
+  text-align: right;
+  align-self: center;
 }
 
 /* staff 工具条（Tools / 清缓存）：站点用 .blend 把文字做成透明，
    实际只占一条细线。压到 14px 高，别再吃一整行。 */
-#alerts {
+#header #alerts {
   margin: 0;
   padding: 1px var(--gutter);
   font-size: var(--t-micro);
@@ -1133,6 +1786,26 @@ tr.group_torrent td.edition_info {
   }
 }
 
+/* 1400px 以下用户条内容开始变挤：允许换行，行高改为自适应，避免压到搜索区 */
+@media (max-width: 1399px) {
+  #header #userinfo {
+    height: auto;
+    min-height: var(--bar-h);
+  }
+
+  #header #userinfo_username {
+    flex-wrap: wrap;
+  }
+}
+
+/* 6 个搜索框在 1100–1200px 之间会和用户条挤在一起，先把输入框收窄 */
+@media (max-width: 1200px) {
+  #header #searchbars input[type="text"],
+  #header #searchbars input[type="search"] {
+    width: 96px;
+  }
+}
+
 @media (max-width: 1099px) {
   /* 与站点同断点：这一档仍是两列（用户条 + 搜索同一行），只压缩 logo */
   :root {
@@ -1149,6 +1822,10 @@ tr.group_torrent td.edition_info {
 
 @media (max-width: 800px) {
   /* 单列堆叠：logo → 用户条 → 搜索 → 导航 */
+  #header #userinfo_username {
+    flex-wrap: wrap;
+  }
+
   :root {
     --logo-h: 64px;
     --bar-h: 34px;
@@ -1163,38 +1840,46 @@ tr.group_torrent td.edition_info {
     grid-row: 1;
   }
 
-  #userinfo {
+  #header #userinfo {
     grid-row: 2;
     height: var(--bar-h);
   }
 
-  #searchbars {
+  #header #searchbars {
     grid-row: 3;
     justify-content: flex-start;
     padding: 0 var(--gutter) var(--s2);
   }
 
-  #menu {
-    grid-row: 4;
+  #header #menu {
+    grid-row: 5;
   }
 
-  #menu ul {
+  #header #alerts {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-self: stretch;
+    text-align: left;
+    padding: 0 var(--gutter) var(--s1);
+  }
+
+  #header #menu ul {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
     scrollbar-width: none;
   }
 
-  #menu ul::-webkit-scrollbar {
+  #header #menu ul::-webkit-scrollbar {
     display: none;
   }
 
-  #searchbars ul {
+  #header #searchbars ul {
     flex-wrap: wrap;
   }
 
-  #searchbars input[type="text"],
-  #searchbars input[type="search"] {
+  #header #searchbars input[type="text"],
+  #header #searchbars input[type="search"] {
     width: 108px;
   }
 
@@ -1230,7 +1915,7 @@ tr.group_torrent td.edition_info {
   }
 
   /* 窄屏用户条：用户名 + 编辑/登出/捐赠 + 两组图标，500px 装不下一行，允许折行 */
-  #userinfo {
+  #header #userinfo {
     height: auto;
     min-height: var(--bar-h);
     flex-wrap: wrap;
